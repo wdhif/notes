@@ -1,4 +1,7 @@
-baseURL = "http://example.org/"
+baseURL = "https://wdhif.github.io/grimoire"
+
 languageCode = "en-us"
-title = "My New Hugo Site"
+title = "Grimoire"
+theme = "docdock"
 publishDir = "../docs"
+

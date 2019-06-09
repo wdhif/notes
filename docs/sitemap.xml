@@ -3,18 +3,204 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://wdhif.github.io/grimoire/content-organisation/logo/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/getting-start/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/getting-start/installation/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/content-organisation/extramenu/</loc>
+    <lastmod>2017-04-29T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/getting-start/configuration/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/content-organisation/customize-style/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/create-page/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/content-organisation/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/search/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/create-page/homepage/</loc>
+    <lastmod>2017-04-28T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/create-page/page-images/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/create-page/myslide/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/create-page/page-slide/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://wdhif.github.io/grimoire/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
+    <loc>https://wdhif.github.io/grimoire/credits/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/content-organisation/customize-style/disable/</loc>
+  </url>
+  
+  <url>
     <loc>https://wdhif.github.io/grimoire/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/showcase/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/tags/tag1/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/tags/tag2/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://wdhif.github.io/grimoire/tags/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/content-organisation/customize-style/themestyle/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/content-organisation/customize-style/theme-variants/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/alert/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/attachments/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/button/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/children/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/excerpt/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/excerpt-include/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/expand/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/icon/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/mermaid/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/notice/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/children/children-1/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/children/children-1/children-1-1/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/children/children-1/children-1-1/children-1-1-1/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/children/children-1/children-1-1/children-1-1-1/children-1-1-1-1/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/children/children-1/children-1-1/children-1-1-1/children-1-1-1-1/children-1-1-1-1-1/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/children/children-2/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/children/children-3/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/children/children-4/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/children/test/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/children/children-2/test3/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/panel/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/shortcodes/revealjs/</loc>
   </url>
   
 </urlset>

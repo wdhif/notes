@@ -13,3 +13,14 @@ My personal and dogmatic grimoire of algorithms, data structures and other knowl
 ====================\\|//====================
                     `---`
 ```
+
+## Website installation
+
+The grimoire website is powered by Hugo (TODO Add hugo link). To build the website, you must first start by cloning the docDock (TODO link to docDock) theme which is managed by a submodule.
+
+```
+git submodule init
+git submodule update
+```
+
+After the theme has been downloaded, you can simply build the website using the ```hugo``` command. The website will be built in the ../docs folder.

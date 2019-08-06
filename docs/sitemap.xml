@@ -3,10 +3,6 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://wdhif.github.io/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/</loc>
-  </url>
-  
-  <url>
     <loc>https://wdhif.github.io/grimoire/linux-kernel-development/</loc>
   </url>
   
@@ -17,6 +13,10 @@
   
   <url>
     <loc>https://wdhif.github.io/grimoire/</loc>
+  </url>
+  
+  <url>
+    <loc>https://wdhif.github.io/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/</loc>
   </url>
   
   <url>

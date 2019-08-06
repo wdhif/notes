@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-08-05T23:25:28 CEST">
+<meta name="revised" content="2019-08-06T20:46:11 CEST">
 <title>Introduction to the Linux Kernel :: Grimoire</title>
 <link rel="shortcut icon" href="/grimoire/images/favicon.png" type="image/x-icon" />
 <link href="/grimoire/css/font-awesome.min.css" rel="stylesheet">
@@ -106,6 +106,61 @@
     
     
     
+
+<h3 id="introduction-to-unix">Introduction to Unix</h3>
+
+<p>Unix is a family of operating systems featuring a similar API and design, including Unix, BSD, Solaris and Linux.</p>
+
+<p>Some Unix characteristics that are at the core of its strength:</p>
+
+<ul>
+<li>Unix is simple: only hundreds of system calls and have a straightforward, even basic, design.</li>
+<li>In Unix, everything is a file: simplifies the manipulation of data and devices into a set of core system calls: open(),read(), write(), lseek(), and close().</li>
+<li>Unix has robust IPC (Interprocess communication) systems.</li>
+</ul>
+
+<h3 id="overview-of-operating-systems-and-kernels">Overview of Operating Systems and Kernels</h3>
+
+<p>The operating system is the parts of the system responsible for basic use and administration.
+The kernel is the innermost portion of the operating system. It is the core internals: the software that provides basic services for all other parts of the system, manages hardware, and distributes system resource.</p>
+
+<p>An OS contains:</p>
+
+<ul>
+<li>Kernel:
+
+<ul>
+<li>Interrupt handlers to service interrupt requests.</li>
+<li>A scheduler to share processor time among multiple processes.</li>
+<li>A memory management system to manage process address spaces.</li>
+<li>System services such as networking and interprocess communication.</li>
+</ul></li>
+<li>Device drivers</li>
+<li>Boot loader</li>
+<li>Command shell</li>
+<li>User interfaces</li>
+<li>Basic utilities</li>
+</ul>
+
+<h4 id="kernel-space-and-user-space">Kernel-space and User-space</h4>
+
+<p><strong>Kernel-space</strong>: on modern systems with protected memory management units, the kernel typically resides in an elevated system state, which includes a protected memory space and full access to the hardware. This system state and memory space is collectively referred to as kernel-space.</p>
+
+<p><strong>User-space</strong>: applications execute in user-space, where they can access a subset of the machine’s available resources and can perform certain system functions, directly access hardware, access memory outside of that allotted them by the kernel, or otherwise misbehave.</p>
+
+<p>When executing kernel code, the system is in kernel-space executing in kernel mode. When running a regular process, the system is in user-space executing in user mode.</p>
+
+<p>Applications running on the system comminicate with the kernel using <strong>system calls</strong> (<a href="https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_1.1.png">Figure 1.1</a>)</p>
+
+<p>Basically, an application will use a C library to use the system call interface. The system calls will allow the Kernel to do operation on behalf of the application.
+Furthermore, the application is said to be executing a system call in <strong>kernel-space</strong>, and the kernel is running in <strong>process context</strong>.</p>
+
+<p>Some function of this C library provide many feature not found in system calls, E.G. the <code>printf()</code> function will not only wall the <code>write()</code> system call but will also do formating, etc&hellip;</p>
+
+<p>On the other hand, the <code>open()</code> function simply use the <code>open()</code> system call. Other functions of this C library does not use system calls at all, E.G. <code>strcpy()</code></p>
+
+<p><img src="https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_1.1.png" alt="Relationship between applications, the kernel, and hardware." /></p>
+
 
     
     

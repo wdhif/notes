@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-08-06T21:17:42 CEST">
+<meta name="revised" content="2019-08-09T22:56:22 CEST">
 <title>Introduction to the Linux Kernel :: Grimoire</title>
 <link rel="shortcut icon" href="/grimoire/images/favicon.png" type="image/x-icon" />
 <link href="/grimoire/css/font-awesome.min.css" rel="stylesheet">
@@ -157,9 +157,91 @@ Furthermore, the application is said to be executing a system call in <strong>ke
 
 <p>Some function of this C library provide many feature not found in system calls, E.G. the <code>printf()</code> function will not only wall the <code>write()</code> system call but will also do formating, etc&hellip;</p>
 
-<p>On the other hand, the <code>open()</code> function simply use the <code>open()</code> system call. Other functions of this C library does not use system calls at all, E.G. <code>strcpy()</code></p>
+<p>On the other hand, the <code>open()</code> function simply use the <code>open()</code> system call. Other functions of this C library does not use system calls at all, E.G. <code>strcpy()</code>.</p>
 
 <p><img src="https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_1.1.png" alt="Relationship between applications, the kernel, and hardware." /></p>
+
+<p>The Kernel also manage system&rsquo;s hardware. When the hardware want to communicate, it will send an <strong>hardware interrupt</strong> to the CPU, which will in turn interrupt the Kernel, which will in turn operate a context switch to execute the <strong>interrupt handler</strong>.</p>
+
+<link href="/grimoire/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
+<script defer src="/grimoire/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
+<div class="mermaid" align="center" >
+graph LR;
+    A[Hardware] -->|Interrupt lines| B[CPU]
+    B[CPU] -->|Interrupt| C[Kernel]
+    C[Kernel] -->|Interrupt Handler| D[Run the interrupt handler code]
+</div>
+
+<p>A number identifies each interrupt, the kernel reads this number and then execute the handler code.</p>
+
+<p>For example:</p>
+
+<link href="/grimoire/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
+<script defer src="/grimoire/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
+<div class="mermaid" align="center" >
+sequenceDiagram
+    participant Y as You
+    participant KC as Keyboard Controller
+    participant C as CPU
+    participant KR as Kernel
+    participant IH as Interrupt Handler Process
+
+    Y->>KC: Type on keyboard
+    KC->>C: Issue an hardware interrupt
+    C->>KR: Forward interrupt with interrupt number
+    KR->>IH: Run interrupt handler according to interrupt number
+    IH->>KC: Process Keyboard data
+    IH->>KC: Let it know it's ready for more data
+</div>
+
+<p>Running interrupt handlers put the Kernel in a special context, the <strong>interrupt context</strong>, not associated with any process.</p>
+
+<p><strong>Each CPU in the Linux Kernel is doing exaclty one of the following:</strong></p>
+
+<ul>
+<li>In <strong>user-space</strong>, running user code in a process.</li>
+<li>In <strong>kernel-space</strong>, in <strong>process context</strong>, running kernel code on behalf of a specific process.</li>
+<li>In <strong>kernel-space</strong>, in <strong>interrupt context</strong>, not associated with any process, handling an interrupt.</li>
+</ul>
+
+<p>This list is <strong>inclusive</strong>, every cases fit any of the previous element. E.G. Even when the Kernel is idle, the CPU is actually running an <em>idle</em> process</p>
+
+<h4 id="monolithic-kernels-vs-microkernels">Monolithic Kernels vs Microkernels</h4>
+
+<p>Most Unix kernels are monolithics and although the <strong>Linux kernel is monolithic</strong>, it can dynamically load and unload kernel modules on demand.</p>
+
+<p>Monolithic Kernels are:</p>
+
+<ul>
+<li>Simpler than Microkernels.</li>
+<li>Implemented as a single process.</li>
+<li>Exist as a single binary.</li>
+<li>Runs in kernel mode.</li>
+<li>Runs everything in the same address space.
+
+<ul>
+<li>Because of this, communication is trivial, the kernel simply invoke functions.</li>
+</ul></li>
+</ul>
+
+<p>Microkernels are:</p>
+
+<ul>
+<li>Broken down into separate process, called <em>servers</em></li>
+<li>Only some servers runs in priviledged mode, if they need it, the rest runs in user mode.
+
+<ul>
+<li>Because of this, direct function invocation is impossible.</li>
+<li>Microkernel uses <strong>message passing</strong>, an <strong>Inter Process communication</strong> (IPC) method.</li>
+<li>Servers invoke <em>services</em> from other servers, using message passing.</li>
+</ul></li>
+<li>Microkernels are modular, if one server crash, it doesn&rsquo;t crash the all kernel.</li>
+<li><strong>IPC</strong> (message passing) and <strong>context switches</strong> (user mode vs privileged mode) involve some serious <strong>overhead</strong>
+
+<ul>
+<li>To avoid this, modern Microkernels (Windows NT and mac OS) runs every servers in privileged mode, defeating the primary purpose of microkernels.</li>
+</ul></li>
+</ul>
 
 
     

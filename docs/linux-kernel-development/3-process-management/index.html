@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Grimoire</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="revised" content="2020-09-14T21:32:35 CEST">
+<title>Process Management :: Grimoire</title>
+<link rel="shortcut icon" href="/grimoire/images/favicon.png" type="image/x-icon" />
+<link href="/grimoire/css/font-awesome.min.css" rel="stylesheet">
+<link href="/grimoire/css/nucleus.css" rel="stylesheet">
+<link href="/grimoire/theme-flex/style.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/grimoire/css/bootstrap.min.css">
+<script src="/grimoire/js/jquery-2.x.min.js"></script>
+<script type="text/javascript">
+      var baseurl = "https:\/\/wdhif.github.io\/grimoire";
+</script>
+<meta name="description" content="">
+
+
+
+    
+  </head>
+  <body data-url="/grimoire/linux-kernel-development/3-process-management/">
+    
+      <header>
+  <div class="logo">
+    
+	
+  
+    <a class="baselink" href="https://wdhif.github.io/grimoire">Grimoire</a>
+  
+
+
+  </div>
+  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
+</header>
+<article>
+  <aside>
+    <ul class="menu">
+          <li data-nav-id="/grimoire/" class="dd-item">
+          <a href="/grimoire/">
+            <i class="fa fa-fw fa-home"></i>
+          </a>
+          </li>
+    <li data-nav-id="/grimoire/linux-kernel-development/" class="dd-item parent haschildren
+        ">
+      <div>
+      <a href="/grimoire/linux-kernel-development/">Linux Kernel Development</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/" class="dd-item">
+        <div>
+          <a href="/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/">
+            Getting Started with the Kernel
+          </a>
+        </div>
+    </li>
+      <li data-nav-id="/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/" class="dd-item">
+        <div>
+          <a href="/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/">
+            Introduction to the Linux Kernel
+          </a>
+        </div>
+    </li>
+      <li data-nav-id="/grimoire/linux-kernel-development/3-process-management/" class="dd-item active">
+        <div>
+          <a href="/grimoire/linux-kernel-development/3-process-management/">
+            Process Management
+          </a>
+        </div>
+    </li>
+        </ul>
+    </li>
+
+
+
+
+    </ul>
+    <section>
+    </section>
+  </aside>
+  <section class="page">
+    
+    <div class="nav-select">
+      <center>Navigation : 
+        <select onchange="javascript:location.href = this.value;">
+          
+    <option value="/grimoire/linux-kernel-development/" >
+   Linux Kernel Development</option> 
+      <option value="/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/" >- Getting Started with the Kernel</option>
+      <option value="/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/" >- Introduction to the Linux Kernel</option>
+      <option value="/grimoire/linux-kernel-development/3-process-management/"  selected>- Process Management</option>
+  
+
+
+
+        </select>
+      </center>
+    </div>
+      <div>
+        <div class="searchbox">
+          <input data-search-input id="search-by" type="text" placeholder="Search...">
+        </div>
+        <script type="text/javascript" src="/grimoire/js/lunr.min.js"></script>
+        <script type="text/javascript" src="/grimoire/js/auto-complete.js"></script>
+        <link href="/grimoire/css/auto-complete.css" rel="stylesheet">
+        <script type="text/javascript">
+          
+              var baseurl = "https:\/\/wdhif.github.io\/grimoire";
+          
+        </script>
+        <script type="text/javascript" src="/grimoire/js/search.js"></script>
+      </div>
+    
+
+    <h1>Process Management</h1>
+    
+    
+    
+    <h3 id="the-process">The Process</h3>
+<p>A <strong>process, or task in the Kernel, is a program (object code) that is currently running</strong>, but a program is not a process, <strong>two or more processes can actually run the same program at the same time.</strong></p>
+<p>They are more than juste code (text section), they also include a set of resources such as:</p>
+<ul>
+<li>Open files.</li>
+<li>Pending signals.</li>
+<li>Internal Kernel data.</li>
+<li>Processor state.</li>
+<li>A memory address space with one or more mappings.</li>
+<li>One or more threads of execution.</li>
+<li>A data section containing global variables.</li>
+</ul>
+<p><strong>Threads of execution</strong>, or <strong>threads</strong>, are the objects of activity within the process.
+Each thread includes:</p>
+<ul>
+<li>A unique program counter.</li>
+<li>A Process stack.</li>
+<li>A set of processor registers.</li>
+</ul>
+<p><strong>The kernel schedules individual threads, not processes.</strong></p>
+<p>Process that runs more than one thread are call <strong>multithreaded</strong>.</p>
+<p>On modern operating systems, processes provide two virtualizations:</p>
+<ul>
+<li><strong>A virtualized processor</strong>: The virtual processor gives the process the illusion that it alone monopolizes the system, despite possibly sharing the processor among hundreds of other processes.</li>
+<li><strong>A virtual memory</strong>:Virtual memory lets the process allocate and manage memory as if it alone owned all the memory in the system.</li>
+</ul>
+<p><strong>Note that threads share the virtual memory abstraction, but they each receives their own virtualized processor.</strong></p>
+<h2 id="process-lifecycle">Process lifecycle</h2>
+<p>The process lifecycle goes as follow:</p>
+<ul>
+<li><strong>fork()</strong>: A <strong>parent process</strong> will run the <strong>fork()</strong> system call, effectively cloning himself (<strong>fork()</strong> is implemented using <strong>clone()</strong>) into a <strong>child process</strong>. The parent process will then resume execution and the child process will start execution at the same place, <strong>where the fork() system call returns</strong>. <strong>fork()</strong> will in fact return twice, once in the parent process, and once in the child process. At some point however, the parent process <strong>will have to run a wait() type system call</strong> to <strong>reap</strong> its exited child process.</li>
+<li><strong>exec()</strong>: After its creation, the child process will run one of the <strong>exec()</strong> system calls that will create a new address space and load a new program into it.</li>
+<li><strong>exit()</strong>: Finally, when a process exits, it run the <strong>exit()</strong> system call.  This will terminate the process and free all its ressources. The process will then be placed in a <strong>zombie state</strong> and until its parent process run the <strong>wait4()</strong> system call.</li>
+</ul>
+<h3 id="process-descriptor-and-the-task-structure">Process Descriptor and the Task Structure</h3>
+<p>The kernel stores the list of processes in a circular doubly linked list called the <strong>task list</strong>. Each element of this list is called a <strong>process descriptor</strong> that will contain all informations about a given process.</p>
+<p>The system identifies processes by a unique process identification value or <strong>PID</strong>, stored in the <strong>process descriptor</strong>. The PID is typically an integer going up to 32,768.
+<strong>This maximum value is important because it is essentially the maximum number of processes that may exist concurrently on the system.</strong></p>
+<p><strong>The Kernel will affect PID to each process in an ascending order</strong>, this creates the notion that the <strong>higher the PID, the later the process started</strong>. But if the maximum number of PID is reached, then it will wrap back and try to affect freed PID to new process, detroying this useful notion.</p>
+<p>You can also increase this value up to four millons, by modifying /proc/sys/kernel/pid_max. Take note that this might break compatibility with older programs.</p>
+<h3 id="process-state">Process State</h3>
+<p>The <strong>state</strong> field of the <strong>process descriptor</strong> describes the current condition of the process.
+<strong>Each process on the system is in exactly one of the five following states:</strong></p>
+<ul>
+<li><strong>TASK_RUNNING</strong>: The process is runnable, it is either currently running or on a runqueue waiting to run. This is the only possible state for a process executing in user-space. It can also apply to a process in kernel-space that is actively running.</li>
+<li><strong>TASK_INTERRUPTIBLE</strong>: The process is sleeping, or blocked, waiting for some condition to exist. When this condition exists, the kernel sets the process’s state to <strong>TASK_RUNNING</strong>. The process also <strong>awakes prematurely and becomes runnable if it receives a signal</strong>.</li>
+<li><strong>TASK_UNINTERRUPTIBLE</strong>: This state is identical to <strong>TASK_INTERRUPTIBLE</strong> except that it does not wake up and become runnable if it receives a signal. This is used in situations where the process must wait without interruption or when the event is expected to occur quite quickly. Because the task does not respond to signals in this state, <strong>TASK_UNINTERRUPTIBLE</strong> is less often used than <strong>TASK_INTERRUPTIBLE</strong>.</li>
+<li><strong>__TASK_TRACED</strong>: The process is being traced by another process, such as a debugger (like strace), using the <strong>ptrace()</strong> system call.</li>
+<li><strong>__TASK_STOPPED</strong>: Process execution has stopped. The task is not running nor is it eligible to run. This occurs if the task receives the <strong>SIGSTOP</strong>, <strong>SIGTSTP</strong>, <strong>SIGTTIN</strong>, or <strong>SIGTTOU</strong> signal or if it receives any signal while it is being debugged.</li>
+</ul>
+<p>Take note that a process in the <strong>TASK_UNINTERRUPTIBLE</strong> state will not even respond to <strong>SIGKILL</strong>. This state is represented by the famous <strong>D</strong> state in the <strong>ps</strong> command.</p>
+<p><img src="https://user-images.githubusercontent.com/5231539/93128748-42a59600-f6d0-11ea-95d9-be06909f7d8c.png" alt="Flow chart of process states."></p>
+
+
+    
+    
+        <div class="chevrons">
+    <div id="navigation">
+<a class="nav nav-prev" href="/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/" title="Introduction to the Linux Kernel"> <i class="fa fa-chevron-left"></i><label>Introduction to the Linux Kernel</label></a>
+    <a class="nav nav-next" href="/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/" title="Getting Started with the Kernel" style="margin-right: 0px;"><label>Getting Started with the Kernel</label><i class="fa fa-chevron-right"></i></a></div>
+  </div>
+
+  </section>
+</article>
+
+<footer>
+
+<div class="footline">
+    
+
+    
+
+    
+
+    
+  </div>
+
+
+	<div>
+
+
+  
+    Create a content/_footer.md file to customize the footer content
+  
+
+
+
+	</div>
+</footer>
+
+<script src="/grimoire/js/clipboard.min.js"></script>
+
+<link href="/grimoire/css/featherlight.min.css" rel="stylesheet">
+<script src="/grimoire/js/featherlight.min.js"></script>
+
+
+
+<script src="/grimoire/theme-flex/script.js"></script>
+
+
+    
+
+    
+    
+
+    
+  </body>
+</html>

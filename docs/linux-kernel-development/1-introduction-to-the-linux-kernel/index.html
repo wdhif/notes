@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-08-09T22:56:22 CEST">
+<meta name="revised" content="2020-09-14T21:32:35 CEST">
 <title>Introduction to the Linux Kernel :: Grimoire</title>
 <link rel="shortcut icon" href="/grimoire/images/favicon.png" type="image/x-icon" />
 <link href="/grimoire/css/font-awesome.min.css" rel="stylesheet">
@@ -52,10 +52,24 @@
             <i class="fa fa-angle-down fa-lg category-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/" class="dd-item">
+        <div>
+          <a href="/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/">
+            Getting Started with the Kernel
+          </a>
+        </div>
+    </li>
       <li data-nav-id="/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/" class="dd-item active">
         <div>
           <a href="/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/">
             Introduction to the Linux Kernel
+          </a>
+        </div>
+    </li>
+      <li data-nav-id="/grimoire/linux-kernel-development/3-process-management/" class="dd-item">
+        <div>
+          <a href="/grimoire/linux-kernel-development/3-process-management/">
+            Process Management
           </a>
         </div>
     </li>
@@ -77,7 +91,9 @@
           
     <option value="/grimoire/linux-kernel-development/" >
    Linux Kernel Development</option> 
+      <option value="/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/" >- Getting Started with the Kernel</option>
       <option value="/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/"  selected>- Introduction to the Linux Kernel</option>
+      <option value="/grimoire/linux-kernel-development/3-process-management/" >- Process Management</option>
   
 
 
@@ -105,64 +121,44 @@
     
     
     
-    
-
-<h3 id="introduction-to-unix">Introduction to Unix</h3>
-
+    <h3 id="introduction-to-unix">Introduction to Unix</h3>
 <p>Unix is a family of operating systems featuring a similar API and design, including Unix, BSD, Solaris and Linux.</p>
-
 <p>Some Unix characteristics that are at the core of its strength:</p>
-
 <ul>
 <li>Unix is simple: only hundreds of system calls and have a straightforward, even basic, design.</li>
 <li>In Unix, everything is a file: simplifies the manipulation of data and devices into a set of core system calls: open(),read(), write(), lseek(), and close().</li>
 <li>Unix has robust IPC (Interprocess communication) systems.</li>
 </ul>
-
 <h3 id="overview-of-operating-systems-and-kernels">Overview of Operating Systems and Kernels</h3>
-
 <p>The operating system is the parts of the system responsible for basic use and administration.
 The kernel is the innermost portion of the operating system. It is the core internals: the software that provides basic services for all other parts of the system, manages hardware, and distributes system resource.</p>
-
 <p>An OS contains:</p>
-
 <ul>
 <li>Kernel:
-
 <ul>
 <li>Interrupt handlers to service interrupt requests.</li>
 <li>A scheduler to share processor time among multiple processes.</li>
 <li>A memory management system to manage process address spaces.</li>
 <li>System services such as networking and interprocess communication.</li>
-</ul></li>
+</ul>
+</li>
 <li>Device drivers</li>
 <li>Boot loader</li>
 <li>Command shell</li>
 <li>User interfaces</li>
 <li>Basic utilities</li>
 </ul>
-
 <h4 id="kernel-space-and-user-space">Kernel-space and User-space</h4>
-
 <p><strong>Kernel-space</strong>: on modern systems with protected memory management units, the kernel typically resides in an elevated system state, which includes a protected memory space and full access to the hardware. This system state and memory space is collectively referred to as kernel-space.</p>
-
 <p><strong>User-space</strong>: applications execute in user-space, where they can access a subset of the machine’s available resources and can perform certain system functions, directly access hardware, access memory outside of that allotted them by the kernel, or otherwise misbehave.</p>
-
 <p>When executing kernel code, the system is in kernel-space executing in kernel mode. When running a regular process, the system is in user-space executing in user mode.</p>
-
 <p>Applications running on the system comminicate with the kernel using <strong>system calls</strong> (<a href="https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_1.1.png">Figure 1.1</a>)</p>
-
 <p>Basically, an application will use a C library to use the system call interface. The system calls will allow the Kernel to do operation on behalf of the application.
 Furthermore, the application is said to be executing a system call in <strong>kernel-space</strong>, and the kernel is running in <strong>process context</strong>.</p>
-
 <p>Some function of this C library provide many feature not found in system calls, E.G. the <code>printf()</code> function will not only wall the <code>write()</code> system call but will also do formating, etc&hellip;</p>
-
 <p>On the other hand, the <code>open()</code> function simply use the <code>open()</code> system call. Other functions of this C library does not use system calls at all, E.G. <code>strcpy()</code>.</p>
-
-<p><img src="https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_1.1.png" alt="Relationship between applications, the kernel, and hardware." /></p>
-
+<p><img src="https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_1.1.png" alt="Relationship between applications, the kernel, and hardware."></p>
 <p>The Kernel also manage system&rsquo;s hardware. When the hardware want to communicate, it will send an <strong>hardware interrupt</strong> to the CPU, which will in turn interrupt the Kernel, which will in turn operate a context switch to execute the <strong>interrupt handler</strong>.</p>
-
 <link href="/grimoire/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
 <script defer src="/grimoire/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
 <div class="mermaid" align="center" >
@@ -171,11 +167,8 @@ graph LR;
     B[CPU] -->|Interrupt| C[Kernel]
     C[Kernel] -->|Interrupt Handler| D[Run the interrupt handler code]
 </div>
-
 <p>A number identifies each interrupt, the kernel reads this number and then execute the handler code.</p>
-
 <p>For example:</p>
-
 <link href="/grimoire/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
 <script defer src="/grimoire/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
 <div class="mermaid" align="center" >
@@ -193,54 +186,44 @@ sequenceDiagram
     IH->>KC: Process Keyboard data
     IH->>KC: Let it know it's ready for more data
 </div>
-
 <p>Running interrupt handlers put the Kernel in a special context, the <strong>interrupt context</strong>, not associated with any process.</p>
-
 <p><strong>Each CPU in the Linux Kernel is doing exaclty one of the following:</strong></p>
-
 <ul>
 <li>In <strong>user-space</strong>, running user code in a process.</li>
 <li>In <strong>kernel-space</strong>, in <strong>process context</strong>, running kernel code on behalf of a specific process.</li>
 <li>In <strong>kernel-space</strong>, in <strong>interrupt context</strong>, not associated with any process, handling an interrupt.</li>
 </ul>
-
 <p>This list is <strong>inclusive</strong>, every cases fit any of the previous element. E.G. Even when the Kernel is idle, the CPU is actually running an <em>idle</em> process</p>
-
 <h4 id="monolithic-kernels-vs-microkernels">Monolithic Kernels vs Microkernels</h4>
-
 <p>Most Unix kernels are monolithics and although the <strong>Linux kernel is monolithic</strong>, it can dynamically load and unload kernel modules on demand.</p>
-
 <p>Monolithic Kernels are:</p>
-
 <ul>
 <li>Simpler than Microkernels.</li>
 <li>Implemented as a single process.</li>
 <li>Exist as a single binary.</li>
 <li>Runs in kernel mode.</li>
 <li>Runs everything in the same address space.
-
 <ul>
 <li>Because of this, communication is trivial, the kernel simply invoke functions.</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <p>Microkernels are:</p>
-
 <ul>
 <li>Broken down into separate process, called <em>servers</em></li>
 <li>Only some servers runs in priviledged mode, if they need it, the rest runs in user mode.
-
 <ul>
 <li>Because of this, direct function invocation is impossible.</li>
 <li>Microkernel uses <strong>message passing</strong>, an <strong>Inter Process communication</strong> (IPC) method.</li>
 <li>Servers invoke <em>services</em> from other servers, using message passing.</li>
-</ul></li>
+</ul>
+</li>
 <li>Microkernels are modular, if one server crash, it doesn&rsquo;t crash the all kernel.</li>
 <li><strong>IPC</strong> (message passing) and <strong>context switches</strong> (user mode vs privileged mode) involve some serious <strong>overhead</strong>
-
 <ul>
 <li>To avoid this, modern Microkernels (Windows NT and mac OS) runs every servers in privileged mode, defeating the primary purpose of microkernels.</li>
-</ul></li>
+</ul>
+</li>
 </ul>
 
 
@@ -248,8 +231,8 @@ sequenceDiagram
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/grimoire/linux-kernel-development/" title="Linux Kernel Development"> <i class="fa fa-chevron-left"></i><label>Linux Kernel Development</label></a>
-    </div>
+<a class="nav nav-prev" href="/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/" title="Getting Started with the Kernel"> <i class="fa fa-chevron-left"></i><label>Getting Started with the Kernel</label></a>
+    <a class="nav nav-next" href="/grimoire/linux-kernel-development/3-process-management/" title="Process Management" style="margin-right: 0px;"><label>Process Management</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Grimoire</title>
@@ -11,6 +11,15 @@
     
     
     <item>
+      <title>Getting Started with the Kernel</title>
+      <link>https://wdhif.github.io/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/</guid>
+      <description>TODO </description>
+    </item>
+    
+    <item>
       <title>Introduction to the Linux Kernel</title>
       <link>https://wdhif.github.io/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -19,6 +28,17 @@
       <description>Introduction to Unix Unix is a family of operating systems featuring a similar API and design, including Unix, BSD, Solaris and Linux.
 Some Unix characteristics that are at the core of its strength:
  Unix is simple: only hundreds of system calls and have a straightforward, even basic, design. In Unix, everything is a file: simplifies the manipulation of data and devices into a set of core system calls: open(),read(), write(), lseek(), and close().</description>
+    </item>
+    
+    <item>
+      <title>Process Management</title>
+      <link>https://wdhif.github.io/grimoire/linux-kernel-development/3-process-management/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/grimoire/linux-kernel-development/3-process-management/</guid>
+      <description>The Process A process, or task in the Kernel, is a program (object code) that is currently running, but a program is not a process, two or more processes can actually run the same program at the same time.
+They are more than juste code (text section), they also include a set of resources such as:
+ Open files. Pending signals. Internal Kernel data. Processor state. A memory address space with one or more mappings.</description>
     </item>
     
   </channel>

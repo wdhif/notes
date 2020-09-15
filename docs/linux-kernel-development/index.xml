@@ -11,16 +11,7 @@
     
     
     <item>
-      <title>Getting Started with the Kernel</title>
-      <link>https://wdhif.github.io/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://wdhif.github.io/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/</guid>
-      <description>TODO </description>
-    </item>
-    
-    <item>
-      <title>Introduction to the Linux Kernel</title>
+      <title>1. Introduction to the Linux Kernel</title>
       <link>https://wdhif.github.io/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
@@ -31,7 +22,16 @@ Some Unix characteristics that are at the core of its strength:
     </item>
     
     <item>
-      <title>Process Management</title>
+      <title>2. Getting Started with the Kernel</title>
+      <link>https://wdhif.github.io/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/</guid>
+      <description>TODO </description>
+    </item>
+    
+    <item>
+      <title>3. Process Management</title>
       <link>https://wdhif.github.io/grimoire/linux-kernel-development/3-process-management/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       

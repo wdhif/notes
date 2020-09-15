@@ -1,5 +1,5 @@
 +++
-title = "Introduction to the Linux Kernel"
+title = "1. Introduction to the Linux Kernel"
 +++
 
 ### Introduction to Unix

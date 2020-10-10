@@ -40,12 +40,12 @@ The current Linux scheduler is the **Completely Fair Scheduler**, or **CFS**. Th
 
 ### Policy
 
-The policy of a scheduler determines what runs when. Therefor it is very important.
+The policy of a scheduler determines what runs when. Therefore it is very important.
 
 ### I/O-Bound Versus Processor-Bound Processes
 
 Processes can be classified as two types:
-* **I/O-bound**: A process that spend much of its time **waiting on I/O requests** (I/O here means any **blockable resources**, like keyboard inputs or network I/O, not only disk I/O). Such process are runnable for only short duration before having to wait on requests, like GUI waiting on user inputs.
+* **I/O-bound**: A process that spend much of its time **waiting on I/O requests** (I/O here means any **blockable resources**, like keyboard inputs or network I/O, not only disk I/O). Such processes are runnable for only short durations before having to wait on requests, like GUI waiting on user inputs.
 * **processor-bound**: **Processor-bound processes spend much of their time executing code.** They tend to run until they are **preempted** because they do not block on I/O requests very often.
 
 ### Process Priority
@@ -57,8 +57,7 @@ A common type of scheduling algorithm is priority-based scheduling. The goal is 
 
 The Linux kernel implement two priority ranges:
 * **Niceness**: A number from **-20 to +19 with a default at 0**. Larger nice values correspond to a lower priority, you are being “nice” to the other processes on the system. **Processes with a lower nice value (higher priority) receive a larger proportion of the system’s processor compared to processes with a higher nice value (lower priority).**
-* **Real-time priority**: The values are configurable, but by default range from **0 to 99**, inclusive. **Higher real-time priority values correspond to a greater priority and all real-time processes are at a higher priority than normal processes.** By default, processes are not real-time, their value is "-", or null.**
-* **Real-time priority**: The values are configurable, but by default range from **0 to 99**, inclusive. **Higher real-time priority values correspond to a greater priority and all real-time processes are at a higher priority than normal processes.** **By default, processes are not real-time**, their value is "-", or null.
+* **Real-time priority**: The values are configurable, but by default range from **0 to 99**, inclusive. **Higher real-time priority values correspond to a greater priority and all real-time processes are at a higher priority than normal processes.** By default, processes are not real-time, their value is "-", or null.
 
 ### Timeslice
 
@@ -70,7 +69,7 @@ Furthermore, the conflicting goals of I/O-bound versus processor-bound processes
 * I/O-bound processes do not need longer timeslices (although they do like to run often)
 * Processor-bound processes crave long timeslices (to keep their caches hot).
 
-**To avoid thoses issues, Linux’s CFS scheduler does not directly assign timeslices to processes.** **Instead, it will assigns processes a proportion of the processor**, therefore, the amount of processor time that a process receives is a function of the load of the system.
+**To avoid thoses issues, Linux’s CFS scheduler does not directly assign timeslices to processes.** **Instead, it will assign to processes a proportion of the processor**, therefore, the amount of processor time that a process receives is a function of the load of the system.
 **This assigned proportion is further affected by each process’s nice value.** The nice value acts as a weight, changing the proportion of the processor time each process receives.
 
 **When a process enters the runnable state, it becomes eligible to run.** Whether the process runs immediately, preempting the currently running process, is a function of how much of a proportion of the processor the newly runnable processor has consumed.
@@ -81,14 +80,14 @@ Furthermore, the conflicting goals of I/O-bound versus processor-bound processes
 
 Consider two runnable processes:
 * **A text editor: I/O-bound.** It will spend nearly all its time waiting for user key presses.
-* **A video encoder: Processor-bound.** Aside from waiting on disk to read the video at first, it will then spends all its time encoding the video, consuming 100% of the processor.
+* **A video encoder: Processor-bound.** Aside from waiting on disk to read the video at first, it will then spend all its time encoding the video, consuming 100% of the processor.
 
 The **text editor**, despite spending most of its time waiting on user input, **when the text editor does receive a key press, the user expects the editor to respond immediately**. **Latency is a primary concern.**
-The **video encoder doesn't have strong time constraint**, we don't really care if it run now or at the next CPU cycle. The sooner it finishes the better, but **latency is not a primary concern**.
+The **video encoder doesn't have strong time constraint**, we don't really care if it runs now or at the next CPU cycle. The sooner it finishes the better, but **latency is not a primary concern**.
 
-If both processes are runnable and have the same nicelevel, they would be awarded both with the same proportion of the processor's time. But since the **text editor** spend a lot of time waiting, it would almost always have more processor time left than the **video encoder**. And because of that, **CFS would let the text editor run in priority, therefor limiting latency**.
+If both processes are runnable and have the same nicelevel, they would be awarded both with the same proportion of the processor's time. But since the **text editor** spend a lot of time waiting, it would almost always have more processor time left than the **video encoder**. And because of that, **CFS would let the text editor run in priority, therefore limiting latency**.
 
-This will allow the **text editor** to run everytime it's ready, and the **video encoder** to run the rest of the time, assuming no other process need to run.
+This will allow the **text editor** to run everytime it's ready, and the **video encoder** to run the rest of the time, assuming no other process needs to run.
 
 ### The Linux Scheduling Algorithm
 

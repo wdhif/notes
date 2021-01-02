@@ -6,12 +6,13 @@ import unittest
 
 
 def insertion_sort(array):
+    # O(N^2) time and O(1) space complexity.
     for index, value in enumerate(array):
         while index > 0 and array[index - 1] > value:
             array[index] = array[index - 1]
             index = index - 1
         array[index] = value
-    
+
     return array
 
 
@@ -33,3 +34,4 @@ class Test(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

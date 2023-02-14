@@ -27,7 +27,7 @@ Process that runs more than one thread are call **multithreaded**.
 
 On modern operating systems, processes provide two virtualizations:
 * **A virtualized processor**: The virtual processor gives the process the illusion that it alone monopolizes the system, despite possibly sharing the processor among hundreds of other processes.
-* **A virtual memory**:Virtual memory lets the process allocate and manage memory as if it alone owned all the memory in the system.
+* **A virtual memory**: Virtual memory lets the process allocate and manage memory as if it alone owned all the memory in the system.
 
 **Note that threads share the virtual memory abstraction, but they each receives their own virtualized processor.**
 
@@ -61,7 +61,7 @@ The **state** field of the **process descriptor** describes the current conditio
 
 Take note that a process in the **TASK_UNINTERRUPTIBLE** state will not even respond to **SIGKILL**. This state is represented by the famous **D** state in the **ps** command.
 
-![Flow chart of process states.](https://user-images.githubusercontent.com/5231539/93128748-42a59600-f6d0-11ea-95d9-be06909f7d8c.png)
+![Flow chart of process states.](https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_3.3.png)
 
 ### Process Context
 
@@ -123,7 +123,7 @@ When a process terminates, the kernel:
 Generally, process destruction is self-induced. It occurs when the process calls the **exit()** system call. 
 A process can also terminate involuntarily, this occurs when the **process receives a signal or exception it cannot handle or ignore**.
 
-Upon deletion, the task enters the **EXIT_ZOMBIE** exit state. The only memory consumed is the one in the **task list** of the kernel. After the parent reap the child, the kernel fully removes the task from the **task list** and the process is deleted.
+Upon deletion, the task enters the **EXIT_ZOMBIE** exit state. The only memory consumed is the one in the **task list** of the kernel. After the parent reap the child using the **wait()** system call, the kernel fully removes the task from the **task list** and the process is deleted.
 
 ### Parentless Tasks, AKA Zombie Processes
 

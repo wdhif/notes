@@ -36,7 +36,7 @@ The timeslice is dynamically calculated as a function of process behavior and co
 
 ### Linux's Process Scheduler
 
-The current Linux scheduler is the **Completely Fair Scheduler**, or **CFS**. The **CFS** was introduced as a replacement for the **O(1)**, which was performant, but was lacking when dealing with interactive process, like on a desktop for example.
+The current Linux scheduler is the **Completely Fair Scheduler**, or **CFS**. The **CFS** was introduced as a replacement for the **O(1)** scheduler, which was performant, but was lacking when dealing with interactive process, like on a desktop for example.
 
 ### Policy
 
@@ -47,6 +47,9 @@ The policy of a scheduler determines what runs when. Therefore it is very import
 Processes can be classified as two types:
 * **I/O-bound**: A process that spend much of its time **waiting on I/O requests** (I/O here means any **blockable resources**, like keyboard inputs or network I/O, not only disk I/O). Such processes are runnable for only short durations before having to wait on requests, like GUI waiting on user inputs.
 * **processor-bound**: **Processor-bound processes spend much of their time executing code.** They tend to run until they are **preempted** because they do not block on I/O requests very often.
+
+Linux, aiming to provide good interactive response and desktop performance, optimizes for response time (low latency), thus favoring I/O-bound processes over processor-bound processors.
+As we will see, this is done in a creative manner that does not neglect processor-bound processes.
 
 ### Process Priority
 
@@ -99,24 +102,110 @@ The Linux scheduler is modular, enabling different algorithms to schedule differ
 The **base scheduler** code, iterates over each scheduler class in order of priority. **The highest priority scheduler class that has a runnable process wins, selecting who runs next.**
 The **Completely Fair Scheduler (CFS) is the registered scheduler class for normal processes**, called **SCHED_NORMAL** in Linux.
 
-### Process Scheduling in Unix Systems
-
-Modern process schedulers have two common concepts:
-* Process priority.
-* Timeslice.
-
-Timeslice is how long a process runs, processes start with some default timeslice. Processes with a higher priority run more frequently and (on many systems) receive a higher timeslice. The priority is exported to user-space in the form of nice values.
-
-Because of this, we have several issues regarding nice values, for example:
-* Increase in context switch if the default timeslice is too short.
-* “nicing down a process by one” could lead to wildly different effects depending on the starting nice value.
-
-Most of these problems are solvable by making substantial but not paradigm-shifting changes to the old-school Unix scheduler.
-
-The approach taken by CFS is a radical (for process schedulers) rethinking of timeslice allotment,
-**do away with timeslices completely and assign each process a proportion of the processor**. CFS thus yields constant fairness but a variable switching rate.
-
 ### Fair Scheduling
 
 CFS is based on a simple concept: Model process scheduling as if the system had an ideal, perfectly multitasking processor.
 **In such a system, each process would receive 1/n of the processor’s time, where n is the number of runnable processes.** We’d schedule them for infinitely small durations, so that in any measurable period we’d have run all n processes for the same amount of time.
+
+### The Linux Scheduling Implementation
+
+### Time Accounting
+
+All process schedulers must account for the time that a process runs. Most Unix systems do so, as discussed earlier, by assigning each process a timeslice.
+On each tick of the system clock, the timeslice is decremented by the tick period. **When the timeslice reaches zero, the process is preempted in favor of another runnable process with a nonzero timeslice.**
+
+**CFS does not have the notion of a timeslice, but it must still keep account for the time that each process runs**, because it needs to ensure that each process runs only for its fair share of the processor. This information is embedded in the process descriptor. We discussed the process descriptor in Chapter 3, “Process Management.”
+
+### The Virtual Runtime
+
+**The Virtual Runtime (vruntime) of a process the actual runtime (the amount of time spent running) normalized (or weighted) by the number of runnable processes, in nanoseconds.**
+**The Virtual Runtime update is triggered periodically by the system timer and also whenever a process becomes runnable or blocks**, becoming unrunnable. In this manner, vruntime is an accurate measure of the runtime of a given process and an indicator of what process should run next.
+
+### Process Selection
+
+On an ideal processor, the Virtual Runtime of all processes of the same priority would be identical, all tasks would have received an equal, fair share of the processor.
+In reality, we cannot perfectly multitask, so CFS attempts to balance a process’s Virtual Runtime with a simple rule: **When CFS is deciding what process to run next, it picks the process with the smallest vruntime.** The CFS maintains a red-black tree for the Virtual Runtimes.
+
+### Preemption and Context Switching
+
+**Context switching, the switching from one runnable task to another, is handled by the scheduler.** It is called when a new process has been selected to run.
+It does two basic jobs:
+* **Switch the virtual memory mapping** from the previous process’s to that of the new process.
+* **Switch the processor state** from the previous process’s to the current’s. This involves saving and restoring stack information and the processor registers and any other architecture-specific state that must be managed and restored on a per-process basis.
+
+**The kernel, however, must know when to call the scheduler.**
+If it called it only when code explicitly did so, user-space programs could run indefinitely.
+
+Instead, the kernel provides the need_resched flag to signify whether a reschedule should be performed.
+* This flag is set by scheduler_tick() (which is ran by a timer) when a process should be preempted.
+* This flag is set by try_to_wake_up() when a process that has a higher priority than the currently running process is awakened.
+
+**Upon returning to user-space or returning from an interrupt, the kernel checks the need_resched flag. If it is set, the kernel invokes the scheduler (using schedule()) before continuing.** The flag is a message to the kernel that the scheduler should be invoked as soon as possible because another process deserves to run.
+
+### User preemption
+
+**User preemption occurs when the kernel is about to return to user-space**, need_resched is set, and therefore, the scheduler is invoked.
+If the kernel is returning to user-space, it knows it is safe to continue executing the current task or to pick a new task to execute.
+
+Consequently, whenever the kernel is preparing to return to user-space either on return from an interrupt or after a system call, the value of need_resched is checked. If it is set, the scheduler is invoked to select a new (more fit) process to execute.
+
+User preemption can occur
+* When returning to user-space from a system call.
+* When returning to user-space from an interrupt handler.
+
+### Kernel Preemption
+
+**The Linux kernel, unlike most other Unix variants and many other operating systems, is a fully preemptive kernel.**
+In nonpreemptive kernels, kernel code runs until completion, the scheduler cannot reschedule a task while it is in the kernel.
+Kernel code runs until it finishes (returns to user-space) or explicitly blocks. However, the Linux kernel is able to preempt a task at any point, so long as the kernel is in a state in which it is safe to reschedule.
+
+So when is it safe to reschedule? **The kernel can preempt a task running in the kernel so long as it does not hold a lock.** That is, locks are used as markers of regions of nonpreemptibility. If a lock is not held, the current code is reentrant and capable of being preempted.
+
+Kernel preemption can occur
+* When an interrupt handler exits, before returning to kernel-space.
+* When kernel code becomes preemptible again, when all locks are released.
+* If a task in the kernel explicitly calls schedule().
+* If a task in the kernel blocks (which results in a call to schedule()).
+
+### Real-Time Scheduling Policies
+
+Linux provides two real-time scheduling policies
+* SCHED_FIFO
+* SCHED_RR
+
+The normal, not real-time scheduling policy is SCHED_NORMAL (using the CFS). Via the scheduling classes framework, these real-time policies are managed not by the Completely Fair Scheduler, but by a special real-time scheduler.
+
+**SCHED_FIFO implements a simple first-in, first-out scheduling algorithm without timeslices.**
+
+* A runnable SCHED_FIFO task is always scheduled over any SCHED_NORMAL tasks.
+* When a SCHED_FIFO task becomes runnable, it continues to run until it blocks or explicitly yields the processor; it has no timeslice and can run indefinitely.
+* Only a higher priority SCHED_FIFO or SCHED_RR task can preempt a SCHED_FIFO task.
+* Two or more SCHED_FIFO tasks at the same priority run round-robin, but only yielding the processor when they explicitly choose to do so.
+* If a SCHED_FIFO task is runnable, all other tasks at a lower priority cannot run until the SCHED_FIFO task becomes unrunnable.
+
+**SCHED_RR is identical to SCHED_FIFO except that each process can run only until it exhausts a predetermined timeslice. In other words, SCHED_RR is SCHED_FIFO with timeslices. It is a real-time, round-robin scheduling algorithm.**
+
+* When a SCHED_RR task exhausts its timeslice, any other real-time processes at its priority are scheduled round-robin. The timeslice is used to allow only rescheduling of same-priority processes.
+* As with SCHED_FIFO, a higher-priority process always immediately preempts a lower-priority one, and a lower-priority process can never preempt a SCHED_RR task, even if its timeslice is exhausted.
+
+Both real-time scheduling policies implement static priorities. The kernel does not calculate dynamic priority values for real-time tasks. This ensures that a real-time process at a given priority always preempts a process at a lower priority.
+
+Two types of real-time behavior exists:
+
+* Soft real-time, meaning that the kernel tries to schedule applications within timing deadlines, but the kernel does not promise to always achieve these goals.
+* Hard real-time systems are guaranteed to meet any scheduling requirements within certain limits.
+
+**The real-time scheduling policies in Linux provide soft real-time behavior.** Linux makes no guarantees on the capability to schedule real-time tasks. Despite not having a design that guarantees hard real-time behavior, the real-time scheduling performance in Linux is quite good.
+
+Real-time priorities range inclusively from 0 to MAX_RT_PRIO - 1. By default, this range is 0 to 99, since MAX_RT_PRIO is 100.
+This priority space is shared with the nice values of SCHED_NORMAL tasks. They use the space from MAX_RT_PRIO to (MAX_RT_PRIO + 40). By default, this means the –20 to +19 nice range maps directly onto the priority space from 100 to 139.
+
+Default priority ranges:
+
+* 0 to 99: real-time priorities.
+* 100 to 139: normal priorities.
+
+### Scheduler-Related System Calls
+
+Linux provides a family of system calls for the management of scheduler parameters.
+These system calls allow manipulation of process priority, scheduling policy, and processor affinity, as well as provide an explicit mechanism to yield the processor to other tasks.

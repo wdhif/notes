@@ -17,7 +17,7 @@
 <link rel="icon" href="/grimoire/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/grimoire/book.min.c58292d36b18b675680ab9baea2029204537b839ea72f258746ec0f32ce8d6c8.css" integrity="sha256-xYKS02sYtnVoCrm66iApIEU3uDnqcvJYdG7A8yzo1sg=" crossorigin="anonymous">
   <script defer src="/grimoire/flexsearch.min.js"></script>
-  <script defer src="/grimoire/en.search.min.a842ecd7c16f56c0149f80890913adb2abce202e50a35b13fcadec2cbcf715ca.js" integrity="sha256-qELs18FvVsAUn4CJCROtsqvOIC5Qo1sT/K3sLLz3Fco=" crossorigin="anonymous"></script>
+  <script defer src="/grimoire/en.search.min.dadb61c90777260e052656bad0fa87b3b8b288a3a45aac1c083ce931bfa617db.js" integrity="sha256-2tthyQd3Jg4FJla60PqHs7iyiKOkWqwcCDzpMb&#43;mF9s=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -199,10 +199,12 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li>
       <ul>
-        <li><a href="#system-calls">System Calls</a></li>
         <li><a href="#communicating-with-the-kernel">Communicating with the Kernel</a></li>
         <li><a href="#apis-posix-and-the-c-library">APIs, POSIX, and the C Library</a></li>
         <li><a href="#syscalls">Syscalls</a></li>
+        <li><a href="#system-call-handler">System Call Handler</a></li>
+        <li><a href="#system-call-implementation">System Call Implementation</a></li>
+        <li><a href="#system-call-context">System Call Context</a></li>
       </ul>
     </li>
   </ul>
@@ -217,10 +219,10 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h3 id="system-calls">
+  <article class="markdown"><h1 id="system-calls">
   System Calls
   <a class="anchor" href="#system-calls">#</a>
-</h3>
+</h1>
 <p>In any modern operating system, <strong>the kernel provides a set of interfaces by which processes running in user-space can interact with the system.</strong> These interfaces give applications controlled access to hardware, a mechanism with which to create new processes and communicate with existing ones, and the capability to request other operating system resources. The existence of these interfaces, and the fact that applications are not free to directly do whatever they want, is key to providing a stable system.</p>
 <h3 id="communicating-with-the-kernel">
   Communicating with the Kernel
@@ -247,7 +249,7 @@ https://github.com/alex-shpak/hugo-book
 </ul>
 </li>
 </ul>
-<p><strong>In Linux, system calls are the only means user-space has of interfacing with the kernel</strong> and the only legal entry point into the kernel other than exceptions and traps. Other interfaces, such as device files or /proc, are ultimately accessed via system calls. Interestingly, Linux implements far fewer system calls than most systems.</p>
+<p><strong>In Linux, system calls are the only means user-space has of interfacing with the kernel</strong> and the only legal entry point into the kernel other than exceptions and traps. Other interfaces, such as device files or <code>/proc</code>, are ultimately accessed via system calls. Interestingly, Linux implements far fewer system calls than most systems.</p>
 <h3 id="apis-posix-and-the-c-library">
   APIs, POSIX, and the C Library
   <a class="anchor" href="#apis-posix-and-the-c-library">#</a>
@@ -267,7 +269,80 @@ Conversely, the kernel is concerned only with the system calls; what library cal
   Syscalls
   <a class="anchor" href="#syscalls">#</a>
 </h3>
-<p><strong>System calls (often called syscalls in Linux) are typically accessed via function calls defined in the C library.</strong></p>
+<p><strong>System calls (often called syscalls in Linux) are typically accessed via function calls defined in the C library.</strong>
+The functions can define zero, one, or more arguments (inputs) and might result in one or more side effects. Although nearly all system calls have a side effect (that is, they result in some change of the system’s state), a few syscalls, such as getpid(), merely return some data from the kernel.
+System calls also provide a return value of type long (for compatibility with 64-bit architectures) that signifies success or error.
+Usually, although not always, a negative return value denotes an error. A return value of zero is usually (not always) a sign of success.</p>
+<h4 id="system-call-numbers">
+  System Call Numbers
+  <a class="anchor" href="#system-call-numbers">#</a>
+</h4>
+<p><strong>In Linux, each system call is assigned a syscall number.This is a unique number that is used to reference a specific system call.</strong> When a user-space process executes a system call, the syscall number identifies which syscall was executed; the process does not refer to the syscall by name.</p>
+<p>When assigned, the syscall number cannot change; otherwise, compiled applications will break. If a system call is removed, its system call number cannot be recycled, or previously compiled code would aim to invoke one system call but would in reality invoke another.
+Linux provides a &ldquo;not implemented&rdquo; system call, sys_ni_syscall(), which does nothing except return ENOSYS, the error corresponding to an invalid system call. This function is used to &ldquo;plug the hole&rdquo; in the rare event that a syscall is removed or otherwise made unavailable.</p>
+<h4 id="system-call-performance">
+  System Call Performance
+  <a class="anchor" href="#system-call-performance">#</a>
+</h4>
+<p>System calls in Linux are faster than in many other operating systems.
+This is partly because of Linux’s fast context switch times; entering and exiting the kernel is a streamlined and simple affair. The other factor is the simplicity of the system call handler and the individual system calls themselves.</p>
+<h3 id="system-call-handler">
+  System Call Handler
+  <a class="anchor" href="#system-call-handler">#</a>
+</h3>
+<p><strong>It is not possible for user-space applications to execute kernel code directly.</strong> They cannot simply make a function call to a method existing in kernel-space because the kernel exists in a protected memory space. If applications could directly read and write to the kernel’s address space, system security and stability would be nonexistent.</p>
+<p>User-space applications signal the kernel that they want to execute a system call and have the system switch to kernel mode, where the system call can be executed in kernel-space by the kernel on behalf of the application.
+<strong>This mechanism is a software interrupt</strong>: incur an exception, and the system will switch to kernel mode and execute the exception handler. The exception handler in this case is actually the system call handler. The defined software interrupt on x86 for the syscall handler is interrupt number 128.</p>
+<p>Recently, x86 processors added a feature known as sysenter, which provides a faster, more specialized way of trapping into a kernel to execute a system call than using the int interrupt instruction.</p>
+<h4 id="denoting-the-correct-system-call">
+  Denoting the Correct System Call
+  <a class="anchor" href="#denoting-the-correct-system-call">#</a>
+</h4>
+<p>Simply entering kernel-space alone is not sufficient because multiple system calls exist, all of which enter the kernel in the same manner.
+<strong>Thus, the system call number must be passed into the kernel. On x86, the syscall number is fed to the kernel via the <code>eax</code> register.</strong>
+Before causing the trap into the kernel, user-space sticks in eax the number corresponding to the desired system call. The system call handler then reads the value from eax.</p>
+<p><img src="https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_5.2.png" alt="Invoking the system call handler and executing a system call." /></p>
+<h4 id="parameter-passing">
+  Parameter Passing
+  <a class="anchor" href="#parameter-passing">#</a>
+</h4>
+<p>In addition to the system call number, most syscalls require that one or more parameters be passed to them. Somehow, user-space must relay the parameters to the kernel during the trap.
+<strong>The easiest way to do this is via the same means that the syscall number is passed: the parameters are stored in registers.</strong></p>
+<p>On x86-32, the registers <code>ebx</code>, <code>ecx</code>, <code>edx</code>, <code>esi</code>, and <code>edi</code> contain, in order, the first five arguments.
+In the unlikely case of six or more arguments, a single register is used to hold a pointer to user-space where all the parameters are stored.</p>
+<p><strong>The return value is sent to user-space also via register.</strong> On x86, it is written into the <code>eax</code> register.</p>
+<h3 id="system-call-implementation">
+  System Call Implementation
+  <a class="anchor" href="#system-call-implementation">#</a>
+</h3>
+<p>The actual implementation of a system call in Linux does not need to be concerned with the behavior of the system call handler. Thus, adding a new system call to Linux is relatively easy. The hard work lies in designing and implementing the system call; registering it with the kernel is simple.</p>
+<h4 id="implementing-system-calls">
+  Implementing System Calls
+  <a class="anchor" href="#implementing-system-calls">#</a>
+</h4>
+<ul>
+<li>Each syscall should have exactly one purpose. Multiplexing syscalls (a single system call that does wildly different things depending on a flag argument) is discouraged in Linux.</li>
+<li>System call should have a clean and simple interface with the smallest number of arguments possible.</li>
+<li>The semantics and behavior of a system call are important; they must not change, because existing applications will come to rely on them.</li>
+<li>Design the system call to be as general as possible with an eye toward the future. The purpose of the system call will remain constant but its uses may change.</li>
+</ul>
+<h4 id="verifying-the-parameters">
+  Verifying the Parameters
+  <a class="anchor" href="#verifying-the-parameters">#</a>
+</h4>
+<p>System calls must carefully verify all their parameters to ensure that they are valid, legal and correct to guarantee the system’s security and stability.</p>
+<p>One of the most important checks is the validity of any pointers that the user provides. Before following a pointer into user-space, the system must ensure that:</p>
+<ul>
+<li>The pointer points to a region of memory in user-space. Processes must not be able to trick the kernel into reading data in kernel-space on their behalf.</li>
+<li>The pointer points to a region of memory in the process’s address space.The process must not be able to trick the kernel into reading someone else’s data.</li>
+<li>The process must not be able to bypass memory access restrictions. If reading, the memory is marked readable. If writing, the memory is marked writable. If executing, the memory is marked executable.</li>
+</ul>
+<h3 id="system-call-context">
+  System Call Context
+  <a class="anchor" href="#system-call-context">#</a>
+</h3>
+<p><strong>The kernel is in process context during the execution of a system call.</strong> The <code>current</code> pointer points to the current task, which is the process that issued the syscall.</p>
+<p>In process context, the kernel is capable of sleeping (for example, if the system call blocks on a call or explicitly calls schedule()) and is fully preemptible. The capability to sleep means that system calls can make use of the majority of the kernel’s functionality.</p>
 </article>
  
       
@@ -311,10 +386,12 @@ Conversely, the kernel is concerned only with the system calls; what library cal
   <ul>
     <li>
       <ul>
-        <li><a href="#system-calls">System Calls</a></li>
         <li><a href="#communicating-with-the-kernel">Communicating with the Kernel</a></li>
         <li><a href="#apis-posix-and-the-c-library">APIs, POSIX, and the C Library</a></li>
         <li><a href="#syscalls">Syscalls</a></li>
+        <li><a href="#system-call-handler">System Call Handler</a></li>
+        <li><a href="#system-call-implementation">System Call Implementation</a></li>
+        <li><a href="#system-call-context">System Call Context</a></li>
       </ul>
     </li>
   </ul>

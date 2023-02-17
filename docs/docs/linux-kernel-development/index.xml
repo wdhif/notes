@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux Kernel Development on Grimoire</title>
+    <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/</link>
+    <description>Recent content in Linux Kernel Development on Grimoire</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://wdhif.github.io/grimoire/docs/linux-kernel-development/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>1. Introduction to the Linux Kernel</title>
+      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/</guid>
+      <description>Introduction to Unix # Unix is a family of operating systems featuring a similar API and design, including Unix, BSD, Solaris and Linux.
+Some Unix characteristics that are at the core of its strength:
+Unix is simple: only hundreds of system calls and have a straightforward, even basic, design. In Unix, everything is a file: simplifies the manipulation of data and devices into a set of core system calls: open(),read(), write(), lseek(), and close().</description>
+    </item>
+    
+    <item>
+      <title>2. Getting Started with the Kernel</title>
+      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/2-getting-started-with-the-kernel/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/2-getting-started-with-the-kernel/</guid>
+      <description> TODO # </description>
+    </item>
+    
+    <item>
+      <title>3. Process Management</title>
+      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/3-process-management/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/3-process-management/</guid>
+      <description>The Process # A process, or task in the Kernel, is a program (object code) that is currently running, but a program is not a process, two or more processes can actually run the same program at the same time.
+They are more than juste code (text section), they also include a set of resources such as:
+Open files. Pending signals. Internal Kernel data. Processor state. A memory address space with one or more mappings.</description>
+    </item>
+    
+    <item>
+      <title>4. Process Scheduling</title>
+      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/4-process-scheduling/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/4-process-scheduling/</guid>
+      <description>The Scheduler # The process scheduler decides which process runs, when, and for how long.
+The process scheduler (or simply the scheduler, to which it is often shortened) divides the finite resource of processor time between the runnable processes on a system. By deciding which process runs next, the scheduler is responsible for best utilizing the system and giving users the impression that multiple processes are executing simultaneously, AKA Multitasking.</description>
+    </item>
+    
+    <item>
+      <title>5. System Calls</title>
+      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/5-system-calls/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/5-system-calls/</guid>
+      <description>System Calls # In any modern operating system, the kernel provides a set of interfaces by which processes running in user-space can interact with the system. These interfaces give applications controlled access to hardware, a mechanism with which to create new processes and communicate with existing ones, and the capability to request other operating system resources. The existence of these interfaces, and the fact that applications are not free to directly do whatever they want, is key to providing a stable system.</description>
+    </item>
+    
+  </channel>
+</rss>

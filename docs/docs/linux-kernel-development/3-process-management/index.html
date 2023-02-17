@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content=" ">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="3. Process Management" />
+<meta property="og:description" content=" " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wdhif.github.io/grimoire/docs/linux-kernel-development/3-process-management/" /><meta property="article:section" content="docs" />
+
+
+
+<title>3. Process Management | Grimoire</title>
+<link rel="manifest" href="/grimoire/manifest.json">
+<link rel="icon" href="/grimoire/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/grimoire/book.min.c58292d36b18b675680ab9baea2029204537b839ea72f258746ec0f32ce8d6c8.css" integrity="sha256-xYKS02sYtnVoCrm66iApIEU3uDnqcvJYdG7A8yzo1sg=" crossorigin="anonymous">
+  <script defer src="/grimoire/flexsearch.min.js"></script>
+  <script defer src="/grimoire/en.search.min.a842ecd7c16f56c0149f80890913adb2abce202e50a35b13fcadec2cbcf715ca.js" integrity="sha256-qELs18FvVsAUn4CJCROtsqvOIC5Qo1sT/K3sLLz3Fco=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/grimoire/"><span>Grimoire</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/" class="">Linux Kernel Development</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/" class="">1. Introduction to the Linux Kernel</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/2-getting-started-with-the-kernel/" class="">2. Getting Started with the Kernel</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/3-process-management/" class="active">3. Process Management</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/4-process-scheduling/" class="">4. Process Scheduling</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/5-system-calls/" class="">5. System Calls</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/grimoire/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>3. Process Management</strong>
+
+  <label for="toc-control">
+    
+    <img src="/grimoire/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#the-process">The Process</a></li>
+      </ul>
+    </li>
+    <li><a href="#process-lifecycle">Process lifecycle</a>
+      <ul>
+        <li><a href="#process-descriptor-and-the-task-structure">Process Descriptor and the Task Structure</a></li>
+        <li><a href="#process-state">Process State</a></li>
+        <li><a href="#process-context">Process Context</a></li>
+        <li><a href="#the-process-family-tree">The Process Family Tree</a></li>
+        <li><a href="#process-creation">Process Creation</a></li>
+        <li><a href="#copy-on-write">Copy-on-Write</a></li>
+        <li><a href="#threads">Threads</a></li>
+        <li><a href="#kernel-threads">Kernel Threads</a></li>
+        <li><a href="#process-termination">Process Termination</a></li>
+        <li><a href="#parentless-tasks-aka-zombie-processes">Parentless Tasks, AKA Zombie Processes</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h3 id="the-process">
+  The Process
+  <a class="anchor" href="#the-process">#</a>
+</h3>
+<p>A <strong>process, or task in the Kernel, is a program (object code) that is currently running</strong>, but a program is not a process, <strong>two or more processes can actually run the same program at the same time.</strong></p>
+<p>They are more than juste code (text section), they also include a set of resources such as:</p>
+<ul>
+<li>Open files.</li>
+<li>Pending signals.</li>
+<li>Internal Kernel data.</li>
+<li>Processor state.</li>
+<li>A memory address space with one or more mappings.</li>
+<li>One or more threads of execution.</li>
+<li>A data section containing global variables.</li>
+</ul>
+<p><strong>Threads of execution</strong>, or <strong>threads</strong>, are the objects of activity within the process.
+Each thread includes:</p>
+<ul>
+<li>A unique program counter.</li>
+<li>A Process stack.</li>
+<li>A set of processor registers.</li>
+</ul>
+<p><strong>The kernel schedules individual threads, not processes.</strong></p>
+<p>Process that runs more than one thread are call <strong>multithreaded</strong>.</p>
+<p>On modern operating systems, processes provide two virtualizations:</p>
+<ul>
+<li><strong>A virtualized processor</strong>: The virtual processor gives the process the illusion that it alone monopolizes the system, despite possibly sharing the processor among hundreds of other processes.</li>
+<li><strong>A virtual memory</strong>: Virtual memory lets the process allocate and manage memory as if it alone owned all the memory in the system.</li>
+</ul>
+<p><strong>Note that threads share the virtual memory abstraction, but they each receives their own virtualized processor.</strong></p>
+<h2 id="process-lifecycle">
+  Process lifecycle
+  <a class="anchor" href="#process-lifecycle">#</a>
+</h2>
+<p>The process lifecycle goes as follow:</p>
+<ul>
+<li><strong>fork()</strong>: A <strong>parent process</strong> will run the <strong>fork()</strong> system call, effectively cloning himself (<strong>fork()</strong> is implemented using <strong>clone()</strong>) into a <strong>child process</strong>. The parent process will then resume execution and the child process will start execution at the same place, <strong>where the fork() system call returns</strong>. <strong>fork()</strong> will in fact return twice, once in the parent process, and once in the child process. At some point however, the parent process <strong>will have to run a wait() type system call</strong> to <strong>reap</strong> its exited child process.</li>
+<li><strong>exec()</strong>: After its creation, the child process will run one of the <strong>exec()</strong> system calls that will create a new address space and load a new program into it.</li>
+<li><strong>exit()</strong>: Finally, when a process exits, it run the <strong>exit()</strong> system call.  This will terminate the process and free all its ressources. The process will then be placed in a <strong>zombie state</strong> and until its parent process run the <strong>wait4()</strong> system call.</li>
+</ul>
+<h3 id="process-descriptor-and-the-task-structure">
+  Process Descriptor and the Task Structure
+  <a class="anchor" href="#process-descriptor-and-the-task-structure">#</a>
+</h3>
+<p>The kernel stores the list of processes in a circular doubly linked list called the <strong>task list</strong>. Each element of this list is called a <strong>process descriptor</strong> that will contain all informations about a given process.</p>
+<p>The system identifies processes by a unique process identification value or <strong>PID</strong>, stored in the <strong>process descriptor</strong>. The PID is typically an integer going up to 32,768.
+<strong>This maximum value is important because it is essentially the maximum number of processes that may exist concurrently on the system.</strong></p>
+<p><strong>The Kernel will affect PID to each process in an ascending order</strong>, this creates the notion that the <strong>higher the PID, the later the process started</strong>. But if the maximum number of PID is reached, then it will wrap back and try to affect freed PID to new process, detroying this useful notion.</p>
+<p>You can also increase this value up to four millons, by modifying /proc/sys/kernel/pid_max. Take note that this might break compatibility with older programs.</p>
+<h3 id="process-state">
+  Process State
+  <a class="anchor" href="#process-state">#</a>
+</h3>
+<p>The <strong>state</strong> field of the <strong>process descriptor</strong> describes the current condition of the process.
+<strong>Each process on the system is in exactly one of the five following states:</strong></p>
+<ul>
+<li><strong>TASK_RUNNING</strong>: The process is runnable, it is either currently running or on a runqueue waiting to run. This is the only possible state for a process executing in user-space. It can also apply to a process in kernel-space that is actively running.</li>
+<li><strong>TASK_INTERRUPTIBLE</strong>: The process is sleeping, or blocked, waiting for some condition to exist. When this condition exists, the kernel sets the process’s state to <strong>TASK_RUNNING</strong>. The process also <strong>awakes prematurely and becomes runnable if it receives a signal</strong>.</li>
+<li><strong>TASK_UNINTERRUPTIBLE</strong>: This state is identical to <strong>TASK_INTERRUPTIBLE</strong> except that it does not wake up and become runnable if it receives a signal. This is used in situations where the process must wait without interruption or when the event is expected to occur quite quickly. Because the task does not respond to signals in this state, <strong>TASK_UNINTERRUPTIBLE</strong> is less often used than <strong>TASK_INTERRUPTIBLE</strong>.</li>
+<li><strong>__TASK_TRACED</strong>: The process is being traced by another process, such as a debugger (like strace), using the <strong>ptrace()</strong> system call.</li>
+<li><strong>__TASK_STOPPED</strong>: Process execution has stopped. The task is not running nor is it eligible to run. This occurs if the task receives the <strong>SIGSTOP</strong>, <strong>SIGTSTP</strong>, <strong>SIGTTIN</strong>, or <strong>SIGTTOU</strong> signal or if it receives any signal while it is being debugged.</li>
+</ul>
+<p>Take note that a process in the <strong>TASK_UNINTERRUPTIBLE</strong> state will not even respond to <strong>SIGKILL</strong>. This state is represented by the famous <strong>D</strong> state in the <strong>ps</strong> command.</p>
+<p><img src="https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_3.3.png" alt="Flow chart of process states." /></p>
+<h3 id="process-context">
+  Process Context
+  <a class="anchor" href="#process-context">#</a>
+</h3>
+<p>The goal of a process is to execute program code. This code is read from an executable file and executed from within the program&rsquo;s address space. <strong>Normal program execution occurs in user-space, when a program executes a system call or triggers an exception, it enters kernel-space.</strong> At this point, the kernel is said to be “executing on behalf of the process” and <strong>the kernel is in process context</strong>.</p>
+<p><strong>Upon exiting the kernel, the process resumes execution in user-space</strong>, unless a higher-priority process has become runnable in the interim, in which case the scheduler is invoked to select the higher priority process.</p>
+<p>System calls and exception handlers are well-defined interfaces into the kernel. A process can begin executing in kernel-space only through one of these interfaces. <strong>All access to the kernel is through these interfaces.</strong></p>
+<h3 id="the-process-family-tree">
+  The Process Family Tree
+  <a class="anchor" href="#the-process-family-tree">#</a>
+</h3>
+<p>There is a hierarchy between processes. <strong>All processes are descendant of the init process, whose PID is 1.</strong> The Kernel will start the <strong>init</strong> process as the last step of the boot procedure. The <strong>init</strong> process will then read the <strong>initscripts</strong> and start all other programs necessary to complete the boot procedure.</p>
+<p><strong>Every process on the system has exactly one parent.</strong> Likewise, <strong>every process has zero or more children</strong>. Processes that are all direct children of the same parent are called siblings.</p>
+<h3 id="process-creation">
+  Process Creation
+  <a class="anchor" href="#process-creation">#</a>
+</h3>
+<p>Process creation in Unix is unique. Unix takes the unusual approach of separating these steps into two distinct system calls: <strong>fork()</strong> and <strong>exec()</strong>.</p>
+<ul>
+<li><strong>fork()</strong> will create a child process that is a copy of the current task. It only differs by its <strong>PID</strong>, <strong>PPID</strong> (Parent PID) and some other resources, such as pending signals which are not inherited.</li>
+<li><strong>exec()</strong> will load a new program in the task address space and start executing it.</li>
+</ul>
+<h3 id="copy-on-write">
+  Copy-on-Write
+  <a class="anchor" href="#copy-on-write">#</a>
+</h3>
+<p>Traditionnaly, upon <strong>fork()</strong>, all resources owned by the parent process are copied to the child process memory space. Even worse, if the first call of the child process is <strong>exec()</strong>, then all the copied data is discarded to allow the new program to run.
+To optimize this, Linux&rsquo;s <strong>fork()</strong> is using what is called <strong>copy-on-write</strong> pages.</p>
+<p><strong>Copy-on-write, or COW</strong> is working like this:</p>
+<ul>
+<li>When the <strong>fork()</strong> system call is invoked, rather than duplicating the address space, each process, parent and child, will share a single read-only copy.</li>
+<li>The data is marked so that if it is written to, a duplicate is made and each process will get its own copy, therefor, <strong>copy-on-write</strong>. Only the pages that are written to are duplicated, the rest of the memory space will still be shared.</li>
+</ul>
+<p>If the pages are never written, for example if the child calls <strong>exec()</strong> directly after the <strong>fork()</strong>, then the pages are never copied. To make sure that the child process is given the possibility to run <strong>exec()</strong> before the parent write to the data, the Kernel will schedule first the child process.</p>
+<h3 id="threads">
+  Threads
+  <a class="anchor" href="#threads">#</a>
+</h3>
+<p><strong>Thread</strong> provide multiple threads of execution within the same program in a shared memory address space. They can also share open files and other resources.
+Threads enable concurrent programming and, on multiple processor systems, true parallelism.</p>
+<p>To the Linux kernel, there is no concept of a thread. Linux implements all threads as standard processes.
+The Linux kernel does not provide any special scheduling semantics or data structures to represent threads.
+Instead, a thread is merely a process that shares certain resources with other processes.
+<strong>Each thread has appears to the kernel as a normal process and just happen to share resources, such as an address space, with other processes.</strong></p>
+<h3 id="kernel-threads">
+  Kernel Threads
+  <a class="anchor" href="#kernel-threads">#</a>
+</h3>
+<p>It is often useful for the kernel to perform some operations in the background.
+The kernel accomplishes this via <strong>kernel threads</strong>, standard processes that <strong>exist solely in kernel-space</strong>.
+<strong>The significant difference between kernel threads and normal processes is that kernel threads do not have an address space.</strong>
+<strong>They operate only in kernel-space and do not context switch into user-space.</strong> Kernel threads, however, are schedulable and preemptable, the same as normal processes.</p>
+<p>Kernel threads are created on system boot by other kernel threads. Indeed, a kernel thread can be created only by another kernel thread.</p>
+<h3 id="process-termination">
+  Process Termination
+  <a class="anchor" href="#process-termination">#</a>
+</h3>
+<p>When a process terminates, the kernel:</p>
+<ul>
+<li><strong>Releases the resources owned by the process.</strong></li>
+<li><strong>Notifies the process’s parent of the termination of its child.</strong></li>
+</ul>
+<p>Generally, process destruction is self-induced. It occurs when the process calls the <strong>exit()</strong> system call.
+A process can also terminate involuntarily, this occurs when the <strong>process receives a signal or exception it cannot handle or ignore</strong>.</p>
+<p>Upon deletion, the task enters the <strong>EXIT_ZOMBIE</strong> exit state. The only memory consumed is the one in the <strong>task list</strong> of the kernel. After the parent reap the child using the <strong>wait()</strong> system call, the kernel fully removes the task from the <strong>task list</strong> and the process is deleted.</p>
+<h3 id="parentless-tasks-aka-zombie-processes">
+  Parentless Tasks, AKA Zombie Processes
+  <a class="anchor" href="#parentless-tasks-aka-zombie-processes">#</a>
+</h3>
+<p>If a parent exits before its children, some mechanism must exist to reparent any child tasks to a new process, or else parentless terminated processes would forever remain zombies, wasting system memory.
+The solution is to reparent a task’s children on exit to either another process in the current thread group or, if that fails, the <strong>init</strong> process.</p>
+<p>With the process successfully reparented, there is no risk of stray zombie processes. <strong>The init process routinely calls wait() on its children, cleaning up any zombies assigned to it.</strong></p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#the-process">The Process</a></li>
+      </ul>
+    </li>
+    <li><a href="#process-lifecycle">Process lifecycle</a>
+      <ul>
+        <li><a href="#process-descriptor-and-the-task-structure">Process Descriptor and the Task Structure</a></li>
+        <li><a href="#process-state">Process State</a></li>
+        <li><a href="#process-context">Process Context</a></li>
+        <li><a href="#the-process-family-tree">The Process Family Tree</a></li>
+        <li><a href="#process-creation">Process Creation</a></li>
+        <li><a href="#copy-on-write">Copy-on-Write</a></li>
+        <li><a href="#threads">Threads</a></li>
+        <li><a href="#kernel-threads">Kernel Threads</a></li>
+        <li><a href="#process-termination">Process Termination</a></li>
+        <li><a href="#parentless-tasks-aka-zombie-processes">Parentless Tasks, AKA Zombie Processes</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

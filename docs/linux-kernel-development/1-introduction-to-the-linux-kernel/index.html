@@ -1,127 +1,139 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Grimoire</title>
-    
-      <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-09-17T19:06:00 CEST">
-<title>1. Introduction to the Linux Kernel :: Grimoire</title>
-<link rel="shortcut icon" href="/grimoire/images/favicon.png" type="image/x-icon" />
-<link href="/grimoire/css/font-awesome.min.css" rel="stylesheet">
-<link href="/grimoire/css/nucleus.css" rel="stylesheet">
-<link href="/grimoire/theme-flex/style.css" rel="stylesheet">
-
-<link rel="stylesheet" href="/grimoire/css/bootstrap.min.css">
-<script src="/grimoire/js/jquery-2.x.min.js"></script>
-<script type="text/javascript">
-      var baseurl = "https:\/\/wdhif.github.io\/grimoire";
-</script>
-<meta name="description" content="">
+<html lang="en-us" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Introduction to Unix # Unix is a family of operating systems featuring a similar API and design, including Unix, BSD, Solaris and Linux.
+Some Unix characteristics that are at the core of its strength:
+Unix is simple: only hundreds of system calls and have a straightforward, even basic, design. In Unix, everything is a file: simplifies the manipulation of data and devices into a set of core system calls: open(),read(), write(), lseek(), and close().">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="1. Introduction to the Linux Kernel" />
+<meta property="og:description" content="Introduction to Unix # Unix is a family of operating systems featuring a similar API and design, including Unix, BSD, Solaris and Linux.
+Some Unix characteristics that are at the core of its strength:
+Unix is simple: only hundreds of system calls and have a straightforward, even basic, design. In Unix, everything is a file: simplifies the manipulation of data and devices into a set of core system calls: open(),read(), write(), lseek(), and close()." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wdhif.github.io/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/" /><meta property="article:section" content="linux-kernel-development" />
 
 
 
-    
-  </head>
-  <body data-url="/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/">
-    
-      <header>
-  <div class="logo">
-    
-	
+<title>1. Introduction to the Linux Kernel | Grimoire</title>
+<link rel="manifest" href="/grimoire/manifest.json">
+<link rel="icon" href="/grimoire/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/grimoire/book.min.c58292d36b18b675680ab9baea2029204537b839ea72f258746ec0f32ce8d6c8.css" integrity="sha256-xYKS02sYtnVoCrm66iApIEU3uDnqcvJYdG7A8yzo1sg=" crossorigin="anonymous">
+  <script defer src="/grimoire/flexsearch.min.js"></script>
+  <script defer src="/grimoire/en.search.min.c318d043f1f8e47a5a230f1e8f84bcf25d40d93435da1b0c5514988a04cebb45.js" integrity="sha256-wxjQQ/H45HpaIw8ej4S88l1A2TQ12hsMVRSYigTOu0U=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
   
-    <a class="baselink" href="https://wdhif.github.io/grimoire">Grimoire</a>
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/grimoire/"><span>Grimoire</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
   
 
 
-  </div>
-  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
-</header>
-<article>
-  <aside>
-    <ul class="menu">
-          <li data-nav-id="/grimoire/" class="dd-item">
-          <a href="/grimoire/">
-            <i class="fa fa-fw fa-home"></i>
-          </a>
-          </li>
-    <li data-nav-id="/grimoire/linux-kernel-development/" class="dd-item parent haschildren
-        ">
-      <div>
-      <a href="/grimoire/linux-kernel-development/">Linux Kernel Development</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
       </div>
-        <ul>
-      <li data-nav-id="/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/" class="dd-item active">
-        <div>
-          <a href="/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/">
-            1. Introduction to the Linux Kernel
-          </a>
-        </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/grimoire/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>1. Introduction to the Linux Kernel</strong>
+
+  <label for="toc-control">
+    
+    <img src="/grimoire/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#introduction-to-unix">Introduction to Unix</a></li>
+        <li><a href="#overview-of-operating-systems-and-kernels">Overview of Operating Systems and Kernels</a></li>
+      </ul>
     </li>
-      <li data-nav-id="/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/" class="dd-item">
-        <div>
-          <a href="/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/">
-            2. Getting Started with the Kernel
-          </a>
-        </div>
-    </li>
-      <li data-nav-id="/grimoire/linux-kernel-development/3-process-management/" class="dd-item">
-        <div>
-          <a href="/grimoire/linux-kernel-development/3-process-management/">
-            3. Process Management
-          </a>
-        </div>
-    </li>
-        </ul>
-    </li>
+  </ul>
+</nav>
 
 
 
-
-    </ul>
-    <section>
-    </section>
   </aside>
-  <section class="page">
-    
-    <div class="nav-select">
-      <center>Navigation : 
-        <select onchange="javascript:location.href = this.value;">
-          
-    <option value="/grimoire/linux-kernel-development/" >
-   Linux Kernel Development</option> 
-      <option value="/grimoire/linux-kernel-development/1-introduction-to-the-linux-kernel/"  selected>- 1. Introduction to the Linux Kernel</option>
-      <option value="/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/" >- 2. Getting Started with the Kernel</option>
-      <option value="/grimoire/linux-kernel-development/3-process-management/" >- 3. Process Management</option>
   
+ 
+      </header>
 
-
-
-        </select>
-      </center>
-    </div>
-      <div>
-        <div class="searchbox">
-          <input data-search-input id="search-by" type="text" placeholder="Search...">
-        </div>
-        <script type="text/javascript" src="/grimoire/js/lunr.min.js"></script>
-        <script type="text/javascript" src="/grimoire/js/auto-complete.js"></script>
-        <link href="/grimoire/css/auto-complete.css" rel="stylesheet">
-        <script type="text/javascript">
-          
-              var baseurl = "https:\/\/wdhif.github.io\/grimoire";
-          
-        </script>
-        <script type="text/javascript" src="/grimoire/js/search.js"></script>
-      </div>
-    
-
-    <h1>1. Introduction to the Linux Kernel</h1>
-    
-    
-    
-    <h3 id="introduction-to-unix">Introduction to Unix</h3>
+      
+      
+  <article class="markdown"><h3 id="introduction-to-unix">
+  Introduction to Unix
+  <a class="anchor" href="#introduction-to-unix">#</a>
+</h3>
 <p>Unix is a family of operating systems featuring a similar API and design, including Unix, BSD, Solaris and Linux.</p>
 <p>Some Unix characteristics that are at the core of its strength:</p>
 <ul>
@@ -129,7 +141,10 @@
 <li>In Unix, everything is a file: simplifies the manipulation of data and devices into a set of core system calls: open(),read(), write(), lseek(), and close().</li>
 <li>Unix has robust IPC (Interprocess communication) systems.</li>
 </ul>
-<h3 id="overview-of-operating-systems-and-kernels">Overview of Operating Systems and Kernels</h3>
+<h3 id="overview-of-operating-systems-and-kernels">
+  Overview of Operating Systems and Kernels
+  <a class="anchor" href="#overview-of-operating-systems-and-kernels">#</a>
+</h3>
 <p>The operating system is the parts of the system responsible for basic use and administration.
 The kernel is the innermost portion of the operating system. It is the core internals: the software that provides basic services for all other parts of the system, manages hardware, and distributes system resource.</p>
 <p>An OS contains:</p>
@@ -148,7 +163,10 @@ The kernel is the innermost portion of the operating system. It is the core inte
 <li>User interfaces</li>
 <li>Basic utilities</li>
 </ul>
-<h4 id="kernel-space-and-user-space">Kernel-space and User-space</h4>
+<h4 id="kernel-space-and-user-space">
+  Kernel-space and User-space
+  <a class="anchor" href="#kernel-space-and-user-space">#</a>
+</h4>
 <p><strong>Kernel-space</strong>: on modern systems with protected memory management units, the kernel typically resides in an elevated system state, which includes a protected memory space and full access to the hardware. This system state and memory space is collectively referred to as kernel-space.</p>
 <p><strong>User-space</strong>: applications execute in user-space, where they can access a subset of the machine’s available resources and can perform certain system functions, directly access hardware, access memory outside of that allotted them by the kernel, or otherwise misbehave.</p>
 <p>When executing kernel code, the system is in kernel-space executing in kernel mode. When running a regular process, the system is in user-space executing in user mode.</p>
@@ -157,21 +175,35 @@ The kernel is the innermost portion of the operating system. It is the core inte
 Furthermore, the application is said to be executing a system call in <strong>kernel-space</strong>, and the kernel is running in <strong>process context</strong>.</p>
 <p>Some function of this C library provide many feature not found in system calls, E.G. the <code>printf()</code> function will not only wall the <code>write()</code> system call but will also do formating, etc&hellip;</p>
 <p>On the other hand, the <code>open()</code> function simply use the <code>open()</code> system call. Other functions of this C library does not use system calls at all, E.G. <code>strcpy()</code>.</p>
-<p><img src="https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_1.1.png" alt="Relationship between applications, the kernel, and hardware."></p>
+<p><img src="https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_1.1.png" alt="Relationship between applications, the kernel, and hardware." /></p>
 <p>The Kernel also manage system&rsquo;s hardware. When the hardware want to communicate, it will send an <strong>hardware interrupt</strong> to the CPU, which will in turn interrupt the Kernel, which will in turn operate a context switch to execute the <strong>interrupt handler</strong>.</p>
-<link href="/grimoire/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
-<script defer src="/grimoire/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
-<div class="mermaid" align="center" >
+
+
+<script src="/grimoire/mermaid.min.js"></script>
+
+  <script>mermaid.initialize({
+  "flowchart": {
+    "useMaxWidth":true
+  },
+  "theme": "default"
+}
+)</script>
+
+
+
+
+<p class="mermaid">
 graph LR;
     A[Hardware] -->|Interrupt lines| B[CPU]
     B[CPU] -->|Interrupt| C[Kernel]
     C[Kernel] -->|Interrupt Handler| D[Run the interrupt handler code]
-</div>
+</p>
+
 <p>A number identifies each interrupt, the kernel reads this number and then execute the handler code.</p>
 <p>For example:</p>
-<link href="/grimoire/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
-<script defer src="/grimoire/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
-<div class="mermaid" align="center" >
+
+
+<p class="mermaid">
 sequenceDiagram
     participant Y as You
     participant KC as Keyboard Controller
@@ -185,7 +217,8 @@ sequenceDiagram
     KR->>IH: Run interrupt handler according to interrupt number
     IH->>KC: Process Keyboard data
     IH->>KC: Let it know it's ready for more data
-</div>
+</p>
+
 <p>Running interrupt handlers put the Kernel in a special context, the <strong>interrupt context</strong>, not associated with any process.</p>
 <p><strong>Each CPU in the Linux Kernel is doing exaclty one of the following:</strong></p>
 <ul>
@@ -194,7 +227,10 @@ sequenceDiagram
 <li>In <strong>kernel-space</strong>, in <strong>interrupt context</strong>, not associated with any process, handling an interrupt.</li>
 </ul>
 <p>This list is <strong>inclusive</strong>, every cases fit any of the previous element. E.G. Even when the Kernel is idle, the CPU is actually running an <em>idle</em> process</p>
-<h4 id="monolithic-kernels-vs-microkernels">Monolithic Kernels vs Microkernels</h4>
+<h4 id="monolithic-kernels-vs-microkernels">
+  Monolithic Kernels vs Microkernels
+  <a class="anchor" href="#monolithic-kernels-vs-microkernels">#</a>
+</h4>
 <p>Most Unix kernels are monolithics and although the <strong>Linux kernel is monolithic</strong>, it can dynamically load and unload kernel modules on demand.</p>
 <p>Monolithic Kernels are:</p>
 <ul>
@@ -225,59 +261,75 @@ sequenceDiagram
 </ul>
 </li>
 </ul>
-
-
-    
-    
-        <div class="chevrons">
-    <div id="navigation">
-<a class="nav nav-prev" href="/grimoire/linux-kernel-development/" title="Linux Kernel Development"> <i class="fa fa-chevron-left"></i><label>Linux Kernel Development</label></a>
-    <a class="nav nav-next" href="/grimoire/linux-kernel-development/2-getting-started-with-the-kernel/" title="2. Getting Started with the Kernel" style="margin-right: 0px;"><label>2. Getting Started with the Kernel</label><i class="fa fa-chevron-right"></i></a></div>
-  </div>
-
-  </section>
 </article>
+ 
+      
 
-<footer>
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
 
-<div class="footline">
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
     
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#introduction-to-unix">Introduction to Unix</a></li>
+        <li><a href="#overview-of-operating-systems-and-kernels">Overview of Operating Systems and Kernels</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
+
+ 
+      </div>
+    </aside>
     
-
-    
-
-    
-  </div>
-
-
-	<div>
-
+  </main>
 
   
-    Create a content/_footer.md file to customize the footer content
-  
-
-
-
-	</div>
-</footer>
-
-<script src="/grimoire/js/clipboard.min.js"></script>
-
-<link href="/grimoire/css/featherlight.min.css" rel="stylesheet">
-<script src="/grimoire/js/featherlight.min.js"></script>
-
-
-
-<script src="/grimoire/theme-flex/script.js"></script>
-
-
-    
-
-    
-    
-
-    
-  </body>
+</body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -2,6 +2,5 @@ baseURL = "https://wdhif.github.io/grimoire"
 
 languageCode = "en-us"
 title = "Grimoire"
-theme = "docdock"
+theme = "hugo-book"
 publishDir = "../docs"
-

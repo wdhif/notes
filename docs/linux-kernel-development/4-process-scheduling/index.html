@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="The Scheduler # The process scheduler decides which process runs, when, and for how long.
+The process scheduler (or simply the scheduler, to which it is often shortened) divides the finite resource of processor time between the runnable processes on a system. By deciding which process runs next, the scheduler is responsible for best utilizing the system and giving users the impression that multiple processes are executing simultaneously, AKA Multitasking.">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="4. Process Scheduling" />
+<meta property="og:description" content="The Scheduler # The process scheduler decides which process runs, when, and for how long.
+The process scheduler (or simply the scheduler, to which it is often shortened) divides the finite resource of processor time between the runnable processes on a system. By deciding which process runs next, the scheduler is responsible for best utilizing the system and giving users the impression that multiple processes are executing simultaneously, AKA Multitasking." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wdhif.github.io/grimoire/linux-kernel-development/4-process-scheduling/" /><meta property="article:section" content="linux-kernel-development" />
+
+
+
+<title>4. Process Scheduling | Grimoire</title>
+<link rel="manifest" href="/grimoire/manifest.json">
+<link rel="icon" href="/grimoire/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/grimoire/book.min.c58292d36b18b675680ab9baea2029204537b839ea72f258746ec0f32ce8d6c8.css" integrity="sha256-xYKS02sYtnVoCrm66iApIEU3uDnqcvJYdG7A8yzo1sg=" crossorigin="anonymous">
+  <script defer src="/grimoire/flexsearch.min.js"></script>
+  <script defer src="/grimoire/en.search.min.c318d043f1f8e47a5a230f1e8f84bcf25d40d93435da1b0c5514988a04cebb45.js" integrity="sha256-wxjQQ/H45HpaIw8ej4S88l1A2TQ12hsMVRSYigTOu0U=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/grimoire/"><span>Grimoire</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/grimoire/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>4. Process Scheduling</strong>
+
+  <label for="toc-control">
+    
+    <img src="/grimoire/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#the-scheduler">The Scheduler</a></li>
+        <li><a href="#multitasking">Multitasking</a></li>
+        <li><a href="#linuxs-process-scheduler">Linux&rsquo;s Process Scheduler</a></li>
+        <li><a href="#policy">Policy</a></li>
+        <li><a href="#io-bound-versus-processor-bound-processes">I/O-Bound Versus Processor-Bound Processes</a></li>
+        <li><a href="#process-priority">Process Priority</a></li>
+        <li><a href="#timeslice">Timeslice</a></li>
+        <li><a href="#the-scheduling-policy-in-action">The Scheduling Policy in Action</a></li>
+        <li><a href="#the-linux-scheduling-algorithm">The Linux Scheduling Algorithm</a></li>
+        <li><a href="#scheduler-classes">Scheduler Classes</a></li>
+        <li><a href="#fair-scheduling">Fair Scheduling</a></li>
+        <li><a href="#the-linux-scheduling-implementation">The Linux Scheduling Implementation</a></li>
+        <li><a href="#time-accounting">Time Accounting</a></li>
+        <li><a href="#the-virtual-runtime">The Virtual Runtime</a></li>
+        <li><a href="#process-selection">Process Selection</a></li>
+        <li><a href="#preemption-and-context-switching">Preemption and Context Switching</a></li>
+        <li><a href="#user-preemption">User preemption</a></li>
+        <li><a href="#kernel-preemption">Kernel Preemption</a></li>
+        <li><a href="#real-time-scheduling-policies">Real-Time Scheduling Policies</a></li>
+        <li><a href="#scheduler-related-system-calls">Scheduler-Related System Calls</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h3 id="the-scheduler">
+  The Scheduler
+  <a class="anchor" href="#the-scheduler">#</a>
+</h3>
+<p><strong>The process scheduler decides which process runs, when, and for how long.</strong></p>
+<p>The process scheduler (or simply the scheduler, to which it is often shortened) divides the finite resource of processor time between the runnable processes on a system. By deciding which process runs next, the scheduler is responsible for best utilizing the system and giving users the impression that multiple processes are executing simultaneously, AKA <strong>Multitasking</strong>.</p>
+<p>The ideas behind the scheduler are simple:</p>
+<ul>
+<li>To best utilize processor time, assuming there are runnable processes, <strong>a process should always be running</strong>.</li>
+<li>If there are more runnable processes than processors in a system, some processes will not be running at a given moment. These processes are <strong>waiting to run</strong>.</li>
+<li><strong>Deciding which process runs next</strong>, given a set of runnable processes, is the fundamental decision that the scheduler must make.</li>
+</ul>
+<h3 id="multitasking">
+  Multitasking
+  <a class="anchor" href="#multitasking">#</a>
+</h3>
+<p>A multitasking operating system is one that can simultaneously interleave execution of more than one process.</p>
+<ul>
+<li><strong>On single processor machines</strong>, this gives the illusion of multiple processes running concurrently.</li>
+<li><strong>On multiprocessor machines</strong>, such functionality enables processes to actually run concurrently, in parallel, on different processors.</li>
+</ul>
+<p>On either type of machine, it also enables many processes to <strong>block</strong> or <strong>sleep</strong>, not actually executing until work is available.
+<strong>These processes, although in memory, are not runnable.</strong>
+Instead, such processes utilize the kernel to wait until some event (keyboard input, network data, passage of time, and so on) occurs.</p>
+<p>Multitasking operating systems come in two flavors:</p>
+<ul>
+<li><strong>cooperative multitasking</strong>: A process does not stop running until it voluntary decides to do so, it is called <strong>yielding</strong>. Ideally, processes yield often, giving each runnable process a decent chunk of the processor.</li>
+<li><strong>preemptive multitasking</strong>: The scheduler decides when a process is to cease running and a new process is to begin running, it is called <strong>preemption</strong>. The time a process runs before it is preempted is usually predetermined, and it is called the <strong>timeslice of the process</strong>. The process is given a <strong>slice</strong> of processor&rsquo;s time to run.</li>
+</ul>
+<p>The shortcomings of the <strong>cooperative multitasking</strong> approach are manifest, the scheduler cannot make global decisions regarding how long processes run. Processes can monopolize the processor for longer than the user desires, and a hung process that never yields can potentially bring down the entire system.</p>
+<p>On <strong>preemptive multitasking</strong>, the scheduler manage each process timeslices, making global decisions for the system (e.g. priorization) and preventing any one process from monopolizing the processor.
+The timeslice is dynamically calculated as a function of process behavior and configurable system policy.</p>
+<p><strong>Linux, like all Unix variants and most modern operating systems, implements preemptive multitasking.</strong></p>
+<h3 id="linuxs-process-scheduler">
+  Linux&rsquo;s Process Scheduler
+  <a class="anchor" href="#linuxs-process-scheduler">#</a>
+</h3>
+<p>The current Linux scheduler is the <strong>Completely Fair Scheduler</strong>, or <strong>CFS</strong>. The <strong>CFS</strong> was introduced as a replacement for the <strong>O(1)</strong> scheduler, which was performant, but was lacking when dealing with interactive process, like on a desktop for example.</p>
+<h3 id="policy">
+  Policy
+  <a class="anchor" href="#policy">#</a>
+</h3>
+<p>The policy of a scheduler determines what runs when. Therefore it is very important.</p>
+<h3 id="io-bound-versus-processor-bound-processes">
+  I/O-Bound Versus Processor-Bound Processes
+  <a class="anchor" href="#io-bound-versus-processor-bound-processes">#</a>
+</h3>
+<p>Processes can be classified as two types:</p>
+<ul>
+<li><strong>I/O-bound</strong>: A process that spend much of its time <strong>waiting on I/O requests</strong> (I/O here means any <strong>blockable resources</strong>, like keyboard inputs or network I/O, not only disk I/O). Such processes are runnable for only short durations before having to wait on requests, like GUI waiting on user inputs.</li>
+<li><strong>processor-bound</strong>: <strong>Processor-bound processes spend much of their time executing code.</strong> They tend to run until they are <strong>preempted</strong> because they do not block on I/O requests very often.</li>
+</ul>
+<p>Linux, aiming to provide good interactive response and desktop performance, optimizes for response time (low latency), thus favoring I/O-bound processes over processor-bound processors.
+As we will see, this is done in a creative manner that does not neglect processor-bound processes.</p>
+<h3 id="process-priority">
+  Process Priority
+  <a class="anchor" href="#process-priority">#</a>
+</h3>
+<p>A common type of scheduling algorithm is priority-based scheduling. The goal is to <strong>rank</strong> processes based on their worth and need for processor time.
+<strong>Processes with a higher priority run before those with a lower priority</strong>, whereas <strong>processes with the same priority are scheduled in round-robin</strong> (one after the next, repeating).</p>
+<p><strong>The runnable process with timeslice remaining and the highest priority always runs.</strong> Both the user and the system can set a process’s priority to influence the scheduling behavior of the system.</p>
+<p>The Linux kernel implement two priority ranges:</p>
+<ul>
+<li><strong>Niceness</strong>: A number from <strong>-20 to +19 with a default at 0</strong>. Larger nice values correspond to a lower priority, you are being “nice” to the other processes on the system. <strong>Processes with a lower nice value (higher priority) receive a larger proportion of the system’s processor compared to processes with a higher nice value (lower priority).</strong></li>
+<li><strong>Real-time priority</strong>: The values are configurable, but by default range from <strong>0 to 99</strong>, inclusive. <strong>Higher real-time priority values correspond to a greater priority and all real-time processes are at a higher priority than normal processes.</strong> By default, processes are not real-time, their value is &ldquo;-&rdquo;, or null.</li>
+</ul>
+<h3 id="timeslice">
+  Timeslice
+  <a class="anchor" href="#timeslice">#</a>
+</h3>
+<p><strong>The timeslice is the numeric value that represents how long a task can run until it is preempted.</strong> The scheduler policy must dictate a default timeslice, which is not a trivial exercise.</p>
+<ul>
+<li>Too long a timeslice causes the system to have poor interactive performance, the system will no longer feel as if applications are concurrently executed.</li>
+<li>Too short a timeslice causes significant amounts of processor time to be wasted on the overhead of switching processes.</li>
+</ul>
+<p>Furthermore, the conflicting goals of I/O-bound versus processor-bound processes again arise:</p>
+<ul>
+<li>I/O-bound processes do not need longer timeslices (although they do like to run often)</li>
+<li>Processor-bound processes crave long timeslices (to keep their caches hot).</li>
+</ul>
+<p><strong>To avoid thoses issues, Linux’s CFS scheduler does not directly assign timeslices to processes.</strong> <strong>Instead, it will assign to processes a proportion of the processor</strong>, therefore, the amount of processor time that a process receives is a function of the load of the system.
+<strong>This assigned proportion is further affected by each process’s nice value.</strong> The nice value acts as a weight, changing the proportion of the processor time each process receives.</p>
+<p><strong>When a process enters the runnable state, it becomes eligible to run.</strong> Whether the process runs immediately, preempting the currently running process, is a function of how much of a proportion of the processor the newly runnable processor has consumed.</p>
+<ul>
+<li>If <strong>it has consumed a smaller proportion of the processor than the currently executing process, it runs immediately</strong>, preempting the current process.</li>
+<li>If not, it is scheduled to run at a later time.</li>
+</ul>
+<h3 id="the-scheduling-policy-in-action">
+  The Scheduling Policy in Action
+  <a class="anchor" href="#the-scheduling-policy-in-action">#</a>
+</h3>
+<p>Consider two runnable processes:</p>
+<ul>
+<li><strong>A text editor: I/O-bound.</strong> It will spend nearly all its time waiting for user key presses.</li>
+<li><strong>A video encoder: Processor-bound.</strong> Aside from waiting on disk to read the video at first, it will then spend all its time encoding the video, consuming 100% of the processor.</li>
+</ul>
+<p>The <strong>text editor</strong>, despite spending most of its time waiting on user input, <strong>when the text editor does receive a key press, the user expects the editor to respond immediately</strong>. <strong>Latency is a primary concern.</strong>
+The <strong>video encoder doesn&rsquo;t have strong time constraint</strong>, we don&rsquo;t really care if it runs now or at the next CPU cycle. The sooner it finishes the better, but <strong>latency is not a primary concern</strong>.</p>
+<p>If both processes are runnable and have the same nicelevel, they would be awarded both with the same proportion of the processor&rsquo;s time. But since the <strong>text editor</strong> spend a lot of time waiting, it would almost always have more processor time left than the <strong>video encoder</strong>. And because of that, <strong>CFS would let the text editor run in priority, therefore limiting latency</strong>.</p>
+<p>This will allow the <strong>text editor</strong> to run everytime it&rsquo;s ready, and the <strong>video encoder</strong> to run the rest of the time, assuming no other process needs to run.</p>
+<h3 id="the-linux-scheduling-algorithm">
+  The Linux Scheduling Algorithm
+  <a class="anchor" href="#the-linux-scheduling-algorithm">#</a>
+</h3>
+<h3 id="scheduler-classes">
+  Scheduler Classes
+  <a class="anchor" href="#scheduler-classes">#</a>
+</h3>
+<p>The Linux scheduler is modular, enabling different algorithms to schedule different types of processes.
+<strong>This modularity is called scheduler classes.</strong> Scheduler classes enable different, pluggable algorithms to coexist, scheduling their own types of processes. Each scheduler class has a priority.</p>
+<p>The <strong>base scheduler</strong> code, iterates over each scheduler class in order of priority. <strong>The highest priority scheduler class that has a runnable process wins, selecting who runs next.</strong>
+The <strong>Completely Fair Scheduler (CFS) is the registered scheduler class for normal processes</strong>, called <strong>SCHED_NORMAL</strong> in Linux.</p>
+<h3 id="fair-scheduling">
+  Fair Scheduling
+  <a class="anchor" href="#fair-scheduling">#</a>
+</h3>
+<p>CFS is based on a simple concept: Model process scheduling as if the system had an ideal, perfectly multitasking processor.
+<strong>In such a system, each process would receive 1/n of the processor’s time, where n is the number of runnable processes.</strong> We’d schedule them for infinitely small durations, so that in any measurable period we’d have run all n processes for the same amount of time.</p>
+<h3 id="the-linux-scheduling-implementation">
+  The Linux Scheduling Implementation
+  <a class="anchor" href="#the-linux-scheduling-implementation">#</a>
+</h3>
+<h3 id="time-accounting">
+  Time Accounting
+  <a class="anchor" href="#time-accounting">#</a>
+</h3>
+<p>All process schedulers must account for the time that a process runs. Most Unix systems do so, as discussed earlier, by assigning each process a timeslice.
+On each tick of the system clock, the timeslice is decremented by the tick period. <strong>When the timeslice reaches zero, the process is preempted in favor of another runnable process with a nonzero timeslice.</strong></p>
+<p><strong>CFS does not have the notion of a timeslice, but it must still keep account for the time that each process runs</strong>, because it needs to ensure that each process runs only for its fair share of the processor. This information is embedded in the process descriptor. We discussed the process descriptor in Chapter 3, “Process Management.”</p>
+<h3 id="the-virtual-runtime">
+  The Virtual Runtime
+  <a class="anchor" href="#the-virtual-runtime">#</a>
+</h3>
+<p><strong>The Virtual Runtime (vruntime) of a process the actual runtime (the amount of time spent running) normalized (or weighted) by the number of runnable processes, in nanoseconds.</strong>
+<strong>The Virtual Runtime update is triggered periodically by the system timer and also whenever a process becomes runnable or blocks</strong>, becoming unrunnable. In this manner, vruntime is an accurate measure of the runtime of a given process and an indicator of what process should run next.</p>
+<h3 id="process-selection">
+  Process Selection
+  <a class="anchor" href="#process-selection">#</a>
+</h3>
+<p>On an ideal processor, the Virtual Runtime of all processes of the same priority would be identical, all tasks would have received an equal, fair share of the processor.
+In reality, we cannot perfectly multitask, so CFS attempts to balance a process’s Virtual Runtime with a simple rule: <strong>When CFS is deciding what process to run next, it picks the process with the smallest vruntime.</strong> The CFS maintains a red-black tree for the Virtual Runtimes.</p>
+<h3 id="preemption-and-context-switching">
+  Preemption and Context Switching
+  <a class="anchor" href="#preemption-and-context-switching">#</a>
+</h3>
+<p><strong>Context switching, the switching from one runnable task to another, is handled by the scheduler.</strong> It is called when a new process has been selected to run.
+It does two basic jobs:</p>
+<ul>
+<li><strong>Switch the virtual memory mapping</strong> from the previous process’s to that of the new process.</li>
+<li><strong>Switch the processor state</strong> from the previous process’s to the current’s. This involves saving and restoring stack information and the processor registers and any other architecture-specific state that must be managed and restored on a per-process basis.</li>
+</ul>
+<p><strong>The kernel, however, must know when to call the scheduler.</strong>
+If it called it only when code explicitly did so, user-space programs could run indefinitely.</p>
+<p>Instead, the kernel provides the need_resched flag to signify whether a reschedule should be performed.</p>
+<ul>
+<li>This flag is set by scheduler_tick() (which is ran by a timer) when a process should be preempted.</li>
+<li>This flag is set by try_to_wake_up() when a process that has a higher priority than the currently running process is awakened.</li>
+</ul>
+<p><strong>Upon returning to user-space or returning from an interrupt, the kernel checks the need_resched flag. If it is set, the kernel invokes the scheduler (using schedule()) before continuing.</strong> The flag is a message to the kernel that the scheduler should be invoked as soon as possible because another process deserves to run.</p>
+<h3 id="user-preemption">
+  User preemption
+  <a class="anchor" href="#user-preemption">#</a>
+</h3>
+<p><strong>User preemption occurs when the kernel is about to return to user-space</strong>, need_resched is set, and therefore, the scheduler is invoked.
+If the kernel is returning to user-space, it knows it is safe to continue executing the current task or to pick a new task to execute.</p>
+<p>Consequently, whenever the kernel is preparing to return to user-space either on return from an interrupt or after a system call, the value of need_resched is checked. If it is set, the scheduler is invoked to select a new (more fit) process to execute.</p>
+<p>User preemption can occur</p>
+<ul>
+<li>When returning to user-space from a system call.</li>
+<li>When returning to user-space from an interrupt handler.</li>
+</ul>
+<h3 id="kernel-preemption">
+  Kernel Preemption
+  <a class="anchor" href="#kernel-preemption">#</a>
+</h3>
+<p><strong>The Linux kernel, unlike most other Unix variants and many other operating systems, is a fully preemptive kernel.</strong>
+In nonpreemptive kernels, kernel code runs until completion, the scheduler cannot reschedule a task while it is in the kernel.
+Kernel code runs until it finishes (returns to user-space) or explicitly blocks. However, the Linux kernel is able to preempt a task at any point, so long as the kernel is in a state in which it is safe to reschedule.</p>
+<p>So when is it safe to reschedule? <strong>The kernel can preempt a task running in the kernel so long as it does not hold a lock.</strong> That is, locks are used as markers of regions of nonpreemptibility. If a lock is not held, the current code is reentrant and capable of being preempted.</p>
+<p>Kernel preemption can occur</p>
+<ul>
+<li>When an interrupt handler exits, before returning to kernel-space.</li>
+<li>When kernel code becomes preemptible again, when all locks are released.</li>
+<li>If a task in the kernel explicitly calls schedule().</li>
+<li>If a task in the kernel blocks (which results in a call to schedule()).</li>
+</ul>
+<h3 id="real-time-scheduling-policies">
+  Real-Time Scheduling Policies
+  <a class="anchor" href="#real-time-scheduling-policies">#</a>
+</h3>
+<p>Linux provides two real-time scheduling policies</p>
+<ul>
+<li>SCHED_FIFO</li>
+<li>SCHED_RR</li>
+</ul>
+<p>The normal, not real-time scheduling policy is SCHED_NORMAL (using the CFS). Via the scheduling classes framework, these real-time policies are managed not by the Completely Fair Scheduler, but by a special real-time scheduler.</p>
+<p><strong>SCHED_FIFO implements a simple first-in, first-out scheduling algorithm without timeslices.</strong></p>
+<ul>
+<li>A runnable SCHED_FIFO task is always scheduled over any SCHED_NORMAL tasks.</li>
+<li>When a SCHED_FIFO task becomes runnable, it continues to run until it blocks or explicitly yields the processor; it has no timeslice and can run indefinitely.</li>
+<li>Only a higher priority SCHED_FIFO or SCHED_RR task can preempt a SCHED_FIFO task.</li>
+<li>Two or more SCHED_FIFO tasks at the same priority run round-robin, but only yielding the processor when they explicitly choose to do so.</li>
+<li>If a SCHED_FIFO task is runnable, all other tasks at a lower priority cannot run until the SCHED_FIFO task becomes unrunnable.</li>
+</ul>
+<p><strong>SCHED_RR is identical to SCHED_FIFO except that each process can run only until it exhausts a predetermined timeslice. In other words, SCHED_RR is SCHED_FIFO with timeslices. It is a real-time, round-robin scheduling algorithm.</strong></p>
+<ul>
+<li>When a SCHED_RR task exhausts its timeslice, any other real-time processes at its priority are scheduled round-robin. The timeslice is used to allow only rescheduling of same-priority processes.</li>
+<li>As with SCHED_FIFO, a higher-priority process always immediately preempts a lower-priority one, and a lower-priority process can never preempt a SCHED_RR task, even if its timeslice is exhausted.</li>
+</ul>
+<p>Both real-time scheduling policies implement static priorities. The kernel does not calculate dynamic priority values for real-time tasks. This ensures that a real-time process at a given priority always preempts a process at a lower priority.</p>
+<p>Two types of real-time behavior exists:</p>
+<ul>
+<li>Soft real-time, meaning that the kernel tries to schedule applications within timing deadlines, but the kernel does not promise to always achieve these goals.</li>
+<li>Hard real-time systems are guaranteed to meet any scheduling requirements within certain limits.</li>
+</ul>
+<p><strong>The real-time scheduling policies in Linux provide soft real-time behavior.</strong> Linux makes no guarantees on the capability to schedule real-time tasks. Despite not having a design that guarantees hard real-time behavior, the real-time scheduling performance in Linux is quite good.</p>
+<p>Real-time priorities range inclusively from 0 to MAX_RT_PRIO - 1. By default, this range is 0 to 99, since MAX_RT_PRIO is 100.
+This priority space is shared with the nice values of SCHED_NORMAL tasks. They use the space from MAX_RT_PRIO to (MAX_RT_PRIO + 40). By default, this means the –20 to +19 nice range maps directly onto the priority space from 100 to 139.</p>
+<p>Default priority ranges:</p>
+<ul>
+<li>0 to 99: real-time priorities.</li>
+<li>100 to 139: normal priorities.</li>
+</ul>
+<h3 id="scheduler-related-system-calls">
+  Scheduler-Related System Calls
+  <a class="anchor" href="#scheduler-related-system-calls">#</a>
+</h3>
+<p>Linux provides a family of system calls for the management of scheduler parameters.
+These system calls allow manipulation of process priority, scheduling policy, and processor affinity, as well as provide an explicit mechanism to yield the processor to other tasks.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#the-scheduler">The Scheduler</a></li>
+        <li><a href="#multitasking">Multitasking</a></li>
+        <li><a href="#linuxs-process-scheduler">Linux&rsquo;s Process Scheduler</a></li>
+        <li><a href="#policy">Policy</a></li>
+        <li><a href="#io-bound-versus-processor-bound-processes">I/O-Bound Versus Processor-Bound Processes</a></li>
+        <li><a href="#process-priority">Process Priority</a></li>
+        <li><a href="#timeslice">Timeslice</a></li>
+        <li><a href="#the-scheduling-policy-in-action">The Scheduling Policy in Action</a></li>
+        <li><a href="#the-linux-scheduling-algorithm">The Linux Scheduling Algorithm</a></li>
+        <li><a href="#scheduler-classes">Scheduler Classes</a></li>
+        <li><a href="#fair-scheduling">Fair Scheduling</a></li>
+        <li><a href="#the-linux-scheduling-implementation">The Linux Scheduling Implementation</a></li>
+        <li><a href="#time-accounting">Time Accounting</a></li>
+        <li><a href="#the-virtual-runtime">The Virtual Runtime</a></li>
+        <li><a href="#process-selection">Process Selection</a></li>
+        <li><a href="#preemption-and-context-switching">Preemption and Context Switching</a></li>
+        <li><a href="#user-preemption">User preemption</a></li>
+        <li><a href="#kernel-preemption">Kernel Preemption</a></li>
+        <li><a href="#real-time-scheduling-policies">Real-Time Scheduling Policies</a></li>
+        <li><a href="#scheduler-related-system-calls">Scheduler-Related System Calls</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

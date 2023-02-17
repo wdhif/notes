@@ -16,12 +16,19 @@ My personal and dogmatic grimoire of algorithms, data structures and other knowl
 
 ## Website installation
 
-The grimoire website is powered by [Hugo](https://gohugo.io). To build the website, you must first start by cloning the [docDock](https://github.com/vjeantet/hugo-theme-docdock) theme which is managed by a submodule.
+The grimoire website is powered by [Hugo](https://gohugo.io). To build the website, you must first start by cloning the [Hugo Book](https://github.com/alex-shpak/hugo-book) theme which is managed by a submodule.
 
 ```
 git submodule init
 git submodule update
 ```
 
-After the theme has been downloaded, you can simply build the website using the ```hugo``` command. The website will be built in the ../docs folder.
+Run hugo server
+```
+docker run --rm -it -v $(pwd)/website:/src -v $(pwd)/docs:/docs -p 1313:1313 klakegg/hugo:ext-alpine server
+```
 
+Build website
+```
+docker run --rm -it -v $(pwd)/website:/src -v $(pwd)/docs:/docs klakegg/hugo:ext-alpine
+```

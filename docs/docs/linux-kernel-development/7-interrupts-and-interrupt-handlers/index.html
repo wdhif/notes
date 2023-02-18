@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content=" ">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="7. Interrupts and Interrupt Handlers" />
+<meta property="og:description" content=" " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wdhif.github.io/grimoire/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/" /><meta property="article:section" content="docs" />
+
+
+
+<title>7. Interrupts and Interrupt Handlers | Grimoire</title>
+<link rel="manifest" href="/grimoire/manifest.json">
+<link rel="icon" href="/grimoire/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/grimoire/book.min.a82d7e77ceb134d151c4d7e381eeb30623fbd5a524d58c584d8716ecec0205bd.css" integrity="sha256-qC1&#43;d86xNNFRxNfjge6zBiP71aUk1YxYTYcW7OwCBb0=" crossorigin="anonymous">
+  <script defer src="/grimoire/flexsearch.min.js"></script>
+  <script defer src="/grimoire/en.search.min.6b356efc5ba1675935b582cd785e0de0d3a9d6209bf57d0be4179a3f3cad48f4.js" integrity="sha256-azVu/FuhZ1k1tYLNeF4N4NOp1iCb9X0L5BeaPzytSPQ=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/grimoire/"><span>Grimoire</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/" class="">Linux Kernel Development</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/" class="">1. Introduction to the Linux Kernel</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/2-getting-started-with-the-kernel/" class="">2. Getting Started with the Kernel</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/3-process-management/" class="">3. Process Management</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/4-process-scheduling/" class="">4. Process Scheduling</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/5-system-calls/" class="">5. System Calls</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/6-kernel-data-structures/" class="">6. Kernel Data Structures</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/" class="active">7. Interrupts and Interrupt Handlers</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/grimoire/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>7. Interrupts and Interrupt Handlers</strong>
+
+  <label for="toc-control">
+    
+    <img src="/grimoire/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#interrupts">Interrupts</a>
+      <ul>
+        <li><a href="#exceptions-and-interrupts">Exceptions and Interrupts</a></li>
+      </ul>
+    </li>
+    <li><a href="#interrupt-handlers">Interrupt Handlers</a></li>
+    <li><a href="#top-halves-versus-bottom-halves">Top Halves Versus Bottom Halves</a>
+      <ul>
+        <li><a href="#reentrancy-and-interrupt-handlers">Reentrancy and Interrupt Handlers</a></li>
+        <li><a href="#shared-handlers">Shared Handlers</a></li>
+      </ul>
+    </li>
+    <li><a href="#interrupt-context">Interrupt Context</a></li>
+    <li><a href="#implementing-interrupt-handlers">Implementing Interrupt Handlers</a>
+      <ul>
+        <li><a href="#interrupt-path">Interrupt path</a></li>
+      </ul>
+    </li>
+    <li><a href="#interrupts-and-procfs">Interrupts and ProcFS</a></li>
+    <li><a href="#interrupt-control">Interrupt Control</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="interrupts-and-interrupt-handlers">
+  Interrupts and Interrupt Handlers
+  <a class="anchor" href="#interrupts-and-interrupt-handlers">#</a>
+</h1>
+<p><strong>A core responsibility of any operating system kernel is managing the hardware connected to the machine</strong>, hard drives and Blu-ray discs, keyboards and mice, 3D processors and wireless radios. To meet this responsibility, the kernel needs to communicate with the machine’s individual devices.</p>
+<p>Processors can be orders of magnitudes faster than the hardware they talk to; it is not ideal for the kernel to issue a request and wait for a response from slower hardware. Instead, the kernel must be free to go and handle other work, dealing with the hardware only after that hardware has actually completed its work.</p>
+<p>How can the processor work with hardware without impacting the machine’s overall performance?
+One answer to this question is <strong>polling</strong>. Periodically, the kernel can check the status of the hardware in the system and respond accordingly. Polling incurs overhead, however, because it must occur repeatedly regardless of whether the hardware is active or ready.
+A better solution is to provide a mechanism for the hardware to signal to the kernel when attention is needed. <strong>This mechanism is called an interrupt.</strong> In this chapter, we discuss interrupts and how the kernel responds to them, with special functions called <strong>interrupt handlers.</strong></p>
+<h2 id="interrupts">
+  Interrupts
+  <a class="anchor" href="#interrupts">#</a>
+</h2>
+<p><strong>Interrupts enable hardware to signal to the processor.</strong> For example, as you type, the keyboard controller (the hardware device that manages the keyboard) issues an electrical signal to the processor to alert the operating system to newly available key presses. These electrical signals are interrupts.
+The processor receives the interrupt and signals the operating system to enable the operating system to respond to the new data.</p>
+<p>Hardware devices generate interrupts asynchronously to the processor clock, they can occur at any time. <strong>The kernel can be interrupted at any time to process interrupts.</strong></p>
+<ul>
+<li>An interrupt is physically produced by electronic signals originating from hardware devices and directed into input pins on an interrupt controller, a simple chip that multiplexes multiple interrupt lines into a single line to the processor.</li>
+<li>Upon receiving an interrupt, the interrupt controller sends a signal to the processor.</li>
+<li>The processor detects this signal and interrupts its current execution to handle the interrupt.</li>
+<li>The processor can then notify the operating system that an interrupt has occurred, and the operating system can handle the interrupt appropriately.</li>
+</ul>
+<p><strong>Different devices can be associated with different interrupts by means of a unique value associated with each interrupt.</strong>
+This way, interrupts from the keyboard are distinct from interrupts from the hard drive. This enables the operating system to differentiate between interrupts and to know which hardware device caused which interrupt.
+<strong>In turn, the operating system can service each interrupt with its corresponding handler.</strong>
+These interrupt values are often called <code>interrupt request</code> (IRQ) lines. Each IRQ line is assigned a numeric value, for example, on the classic PC, IRQ zero is the timer interrupt and IRQ one is the keyboard interrupt.
+Not all interrupt numbers, however, are so rigidly defined. Interrupts associated with devices on the PCI bus, for example, generally are dynamically assigned.</p>
+<p><strong>A specific interrupt is associated with a specific device, and the kernel knows this. The hardware then issues interrupts to get the kernel’s attention.</strong></p>
+<h3 id="exceptions-and-interrupts">
+  Exceptions and Interrupts
+  <a class="anchor" href="#exceptions-and-interrupts">#</a>
+</h3>
+<p>Exceptions are often discussed at the same time as interrupts. Unlike interrupts, <strong>exceptions occur synchronously with respect to the processor clock; they are often called synchronous interrupts.</strong> Exceptions are produced by the processor while executing instructions either in response to a programming error (e.g. divide by zero) or abnormal conditions that must be handled by the kernel (e.g. a page fault). Because many processor architectures handle exceptions in a similar manner to interrupts, the kernel infrastructure for handling the two is similar.</p>
+<p>We can define Interrupts and Exceptions as follows:</p>
+<ul>
+<li><strong>Interrupts</strong>: asynchronous interrupts generated by hardware, also called hardware interrupts.</li>
+<li><strong>Exceptions</strong>: synchronous interrupts generated by the processor, also called software interrupts.</li>
+</ul>
+<h2 id="interrupt-handlers">
+  Interrupt Handlers
+  <a class="anchor" href="#interrupt-handlers">#</a>
+</h2>
+<p><strong>The function the kernel runs in response to a specific interrupt is called an interrupt handler or <code>interrupt service routine</code> (ISR).</strong>
+Each device that generates interrupts has an associated interrupt handler. For example, one function handles interrupts from the system timer, whereas another function handles interrupts generated by the keyboard.
+<strong>The interrupt handler for a device is part of the device’s <code>driver</code>, the kernel code that manages the device.</strong>
+Each device has one associated <code>driver</code>. If that device uses interrupts (and most do), that <code>driver</code> must register one interrupt handler.</p>
+<p>In Linux, interrupt handlers are normal C functions, which match a specific prototype and thus enables the kernel to pass the handler information in a standard way.
+<strong>What differentiates interrupt handlers from other kernel functions is that the kernel invokes them in response to interrupts and that they run in a special context called <code>interrupt context</code>.</strong>
+<strong>This special context is occasionally called <code>atomic context</code> because code executing in this context is unable to block.</strong></p>
+<p>Because an interrupt can occur at any time, an interrupt handler can be executed at any time. It is imperative that the handler runs quickly, to resume execution of the code that was interrupted and the hardware as soon as possible. At the very least, an interrupt handler’s job is to acknowledge the interrupt’s receipt to the hardware to let it continue its normal operation.</p>
+<p><strong>Often, however, interrupt handlers have a large amount of work to perform.</strong>
+For example, consider the interrupt handler for a network device. On top of responding to the hardware, the interrupt handler needs to copy networking packets from the hardware into memory, process them, and push the packets down to the appropriate protocol stack or application.</p>
+<h2 id="top-halves-versus-bottom-halves">
+  Top Halves Versus Bottom Halves
+  <a class="anchor" href="#top-halves-versus-bottom-halves">#</a>
+</h2>
+<p>These two goals, that an interrupt handler execute quickly and perform a large amount of work, conflict with one another.</p>
+<p><strong>Because of these competing goals, the processing of interrupts is split into two parts, or halves:</strong></p>
+<ul>
+<li><strong>Top half</strong>: The interrupt handler is the top half. The top half is run immediately upon receipt of the interrupt and performs only the work that is time-critical, such as acknowledging receipt of the interrupt or resetting the hardware.</li>
+<li><strong>Bottom half</strong>: Work that can be performed later is deferred until the bottom half. The bottom half runs in the future, at a more convenient time, with all interrupts enabled.</li>
+</ul>
+<p>For example using the network card:</p>
+<ul>
+<li>When network cards receive packets from the network, the network cards immediately issue an interrupt. This optimizes network throughput and latency and avoids timeouts.
+The kernel responds by executing the network card&rsquo;s registered interrupt.</li>
+<li>The interrupt runs, acknowledges the hardware, copies the new networking packets into main memory, and readies the network card for more packets. These jobs are the important, time-critical, and hardware-specific work.</li>
+<li>
+<ul>
+<li>The kernel generally needs to quickly copy the networking packet into main memory because the network data buffer on the networking card is fixed and miniscule in size, particularly compared to main memory. Delays in copying the packets can result in a buffer overrun, with incoming packets overwhelming the networking card&rsquo;s buffer and thus packets being dropped.</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>After the networking data is safely in the main memory, the interrupt&rsquo;s job is done, and it can return control of the system to whatever code was interrupted when the interrupt was generated.</li>
+</ul>
+</li>
+<li>The rest of the processing and handling of the packets occurs later, in the bottom half.</li>
+</ul>
+<h3 id="reentrancy-and-interrupt-handlers">
+  Reentrancy and Interrupt Handlers
+  <a class="anchor" href="#reentrancy-and-interrupt-handlers">#</a>
+</h3>
+<p>Interrupt handlers in Linux need not be reentrant. When a given interrupt handler is executing, the corresponding interrupt line is masked out on all processors, preventing another interrupt on the same line from being received.
+Normally all other interrupts are enabled, so other interrupts are serviced, but the current line is always disabled.
+Consequently, the same interrupt handler is never invoked concurrently to service a nested interrupt. This greatly simplifies writing your interrupt handler.</p>
+<h3 id="shared-handlers">
+  Shared Handlers
+  <a class="anchor" href="#shared-handlers">#</a>
+</h3>
+<p>Multiple devices could use the same IRQ line, its called <strong>Interrupt Sharing</strong>.
+When the kernel receives an interrupt, it invokes sequentially each registered handler on the line. Therefore, it is important that the handler be capable of distinguishing whether it generated a given interrupt.
+The handler must quickly exit if its associated device did not generate the interrupt. This requires the hardware device to have a status register (or similar mechanism) that the handler can check. Most hardware has such a feature.</p>
+<h2 id="interrupt-context">
+  Interrupt Context
+  <a class="anchor" href="#interrupt-context">#</a>
+</h2>
+<p><strong>When executing an interrupt handler, the kernel is in <code>interrupt context</code>.</strong></p>
+<p>The Kernel can only be in two different context:</p>
+<ul>
+<li>In <strong>process context</strong></li>
+<li>
+<ul>
+<li>In <strong>user-space</strong>,  running user code in a process.</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>In <strong>kernel-space</strong>, running kernel code on behalf of a specific process.</li>
+</ul>
+</li>
+<li>in <strong>interrupt context</strong>, in <strong>kernel-space</strong>, not associated with any process, handling an interrupt.</li>
+</ul>
+<p><strong>Interrupt context cannot sleep and cannot reschedule.</strong> Therefore, you cannot call certain functions from interrupt context. If a function sleeps, you cannot use it from your interrupt handler: this limits the functions that can be called from an interrupt handler.
+<strong>Interrupt context is time-critical, because the interrupt handler interrupts other code.</strong></p>
+<h2 id="implementing-interrupt-handlers">
+  Implementing Interrupt Handlers
+  <a class="anchor" href="#implementing-interrupt-handlers">#</a>
+</h2>
+<p><strong>The implementation of the interrupt handling system in Linux is architecture-dependent.</strong> The implementation depends on the processor, the type of interrupt controller used, and the design of the architecture and machine.</p>
+<p><img src="https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_7.1.png" alt="The path that an interrupt takes from hardware and on through the kernel." /></p>
+<h3 id="interrupt-path">
+  Interrupt path
+  <a class="anchor" href="#interrupt-path">#</a>
+</h3>
+<p><strong>From a device to the processor</strong></p>
+<ul>
+<li>A device issues an interrupt by sending an electric signal over its bus to the interrupt controller.</li>
+<li>If the interrupt line is enabled (they can be masked out), the interrupt controller sends the interrupt to the processor. In most architectures, this is accomplished by an electrical signal sent over a special pin to the processor.</li>
+<li>If interrupts are not disabled in the processor, the processor immediately stops what it is doing, disables the interrupt system, and jumps to a predefined location in memory and executes the code located there. This predefined point is set up by the kernel and is the entry point for interrupt handlers.</li>
+</ul>
+<p><strong>Inside the Kernel</strong></p>
+<p>Similarly to system calls that enter the kernel through a predefined exception handler, the interrupt in the kernel begins at this predefined entry point.</p>
+<ul>
+<li>For each interrupt line, the processor jumps to a unique location in memory and executes the code located there. In this manner, the kernel knows the IRQ number (the interrupt value) of the incoming interrupt.</li>
+<li>The initial entry point (assembly entry routine) saves the interrupt value and stores the current register values of the interrupted task on the stack.</li>
+<li>Then, the Kernel ensures that a valid handler is registered on the line and that it is enabled and not currently executing. If so, it calls the corresponding <strong>interrupt handler</strong> (using <code>do_IRQ()</code>).</li>
+</ul>
+<p>From this point, most of the interrupt handling code is written in C, but is still architecture-dependent.</p>
+<ul>
+<li>Since the processor disabled interrupts, they are turned back on if <code>IRQF_DISABLED</code> was not specified during the handler&rsquo;s registration.</li>
+<li>Each potential handler is executed in a loop. If this line is not shared, the loop terminates after the first iteration. Otherwise, all handlers are executed.</li>
+</ul>
+<p><strong>At this point, all potential handlers have been executed.</strong></p>
+<ul>
+<li>If a reschedule is pending</li>
+<li>
+<ul>
+<li>If the kernel is returning to <code>user-space</code> (that is, the interrupt interrupted a user process), the scheduler is called.</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>If the kernel is returning to <code>kernel-space</code> (that is, the interrupt interrupted the kernel itself), the scheduler is called only if the Kernel does not hold locks. Otherwise it is not safe to preempt the kernel.</li>
+</ul>
+</li>
+<li>After <code>schedule()</code> returns, or if there is no work pending, the initial registers are restored and the kernel resumes whatever was interrupted.</li>
+</ul>
+<h2 id="interrupts-and-procfs">
+  Interrupts and ProcFS
+  <a class="anchor" href="#interrupts-and-procfs">#</a>
+</h2>
+<p><strong>ProcFS is a virtual filesystem that exists only in kernel memory and is typically mounted at <code>/proc</code>. Reading or writing files in procfs invokes kernel functions that simulate reading or writing from a real file.</strong></p>
+<p>The <code>/proc/interrupts</code> file is populated with statistics related to interrupts on the system.</p>
+<h2 id="interrupt-control">
+  Interrupt Control
+  <a class="anchor" href="#interrupt-control">#</a>
+</h2>
+<p>The Linux kernel implements a family of interfaces for manipulating the state of interrupts. <strong>These interfaces enable you to disable the interrupt system for the current processor or mask out an interrupt line for the entire machine.</strong> These routines are all architecture-dependent.</p>
+<p>Controling the interrupt system is needed to provide synchronization.</p>
+<ul>
+<li>Disabling interrupts guarantees that an interrupt handler will not preempt the current code.</li>
+<li>Disabling interrupts also disables kernel preemption.</li>
+</ul>
+<p>However, neither disabling interrupt delivery nor disabling kernel preemption provides any protection from concurrent access from another processor. Because Linux supports multiple processors, kernel code generally needs to obtain some sort of lock to prevent another processor from accessing shared data simultaneously. These locks are often obtained in conjunction with disabling local interrupts.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#interrupts">Interrupts</a>
+      <ul>
+        <li><a href="#exceptions-and-interrupts">Exceptions and Interrupts</a></li>
+      </ul>
+    </li>
+    <li><a href="#interrupt-handlers">Interrupt Handlers</a></li>
+    <li><a href="#top-halves-versus-bottom-halves">Top Halves Versus Bottom Halves</a>
+      <ul>
+        <li><a href="#reentrancy-and-interrupt-handlers">Reentrancy and Interrupt Handlers</a></li>
+        <li><a href="#shared-handlers">Shared Handlers</a></li>
+      </ul>
+    </li>
+    <li><a href="#interrupt-context">Interrupt Context</a></li>
+    <li><a href="#implementing-interrupt-handlers">Implementing Interrupt Handlers</a>
+      <ul>
+        <li><a href="#interrupt-path">Interrupt path</a></li>
+      </ul>
+    </li>
+    <li><a href="#interrupts-and-procfs">Interrupts and ProcFS</a></li>
+    <li><a href="#interrupt-control">Interrupt Control</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

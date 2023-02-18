@@ -56,5 +56,24 @@ The process scheduler (or simply the scheduler, to which it is often shortened) 
       <description>System Calls # In any modern operating system, the kernel provides a set of interfaces by which processes running in user-space can interact with the system. These interfaces give applications controlled access to hardware, a mechanism with which to create new processes and communicate with existing ones, and the capability to request other operating system resources. The existence of these interfaces, and the fact that applications are not free to directly do whatever they want, is key to providing a stable system.</description>
     </item>
     
+    <item>
+      <title>6. Kernel Data Structures</title>
+      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/6-kernel-data-structures/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/6-kernel-data-structures/</guid>
+      <description>Kernel Data Structures # TODO</description>
+    </item>
+    
+    <item>
+      <title>7. Interrupts and Interrupt Handlers</title>
+      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/</guid>
+      <description>Interrupts and Interrupt Handlers # A core responsibility of any operating system kernel is managing the hardware connected to the machine, hard drives and Blu-ray discs, keyboards and mice, 3D processors and wireless radios. To meet this responsibility, the kernel needs to communicate with the machine’s individual devices.
+Processors can be orders of magnitudes faster than the hardware they talk to; it is not ideal for the kernel to issue a request and wait for a response from slower hardware.</description>
+    </item>
+    
   </channel>
 </rss>

@@ -75,5 +75,15 @@ The process scheduler (or simply the scheduler, to which it is often shortened) 
 Processors can be orders of magnitudes faster than the hardware they talk to; it is not ideal for the kernel to issue a request and wait for a response from slower hardware.</description>
     </item>
     
+    <item>
+      <title>8. Bottom Halves and Deferring Work</title>
+      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/</guid>
+      <description>Bottom Halves and Deferring Work # Interrupt handlers, can form only the first half of any interrupt processing solution, with the following limitations:
+Interrupt handlers run asynchronously and interrupt other potentially important code, including other interrupt handlers. Therefore, to avoid stalling the interrupted code for too long, interrupt handlers need to run as quickly as possible. Interrupt handlers are often timing-critical because they deal with hardware. Interrupt handlers do not run in process context.</description>
+    </item>
+    
   </channel>
 </rss>

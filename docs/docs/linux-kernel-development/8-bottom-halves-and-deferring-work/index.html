@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content=" ">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="8. Bottom Halves and Deferring Work" />
+<meta property="og:description" content=" " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wdhif.github.io/grimoire/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/" /><meta property="article:section" content="docs" />
+
+
+
+<title>8. Bottom Halves and Deferring Work | Grimoire</title>
+<link rel="manifest" href="/grimoire/manifest.json">
+<link rel="icon" href="/grimoire/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/grimoire/book.min.a82d7e77ceb134d151c4d7e381eeb30623fbd5a524d58c584d8716ecec0205bd.css" integrity="sha256-qC1&#43;d86xNNFRxNfjge6zBiP71aUk1YxYTYcW7OwCBb0=" crossorigin="anonymous">
+  <script defer src="/grimoire/flexsearch.min.js"></script>
+  <script defer src="/grimoire/en.search.min.b57730c6ba8538631a7becf3b723c74621e12aa76f236df1ae153dc929cc26a6.js" integrity="sha256-tXcwxrqFOGMae&#43;zztyPHRiHhKqdvI23xrhU9ySnMJqY=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/grimoire/"><span>Grimoire</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/" class="">Linux Kernel Development</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/" class="">1. Introduction to the Linux Kernel</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/2-getting-started-with-the-kernel/" class="">2. Getting Started with the Kernel</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/3-process-management/" class="">3. Process Management</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/4-process-scheduling/" class="">4. Process Scheduling</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/5-system-calls/" class="">5. System Calls</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/6-kernel-data-structures/" class="">6. Kernel Data Structures</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/" class="">7. Interrupts and Interrupt Handlers</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/" class="active">8. Bottom Halves and Deferring Work</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/grimoire/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>8. Bottom Halves and Deferring Work</strong>
+
+  <label for="toc-control">
+    
+    <img src="/grimoire/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#bottom-halves">Bottom Halves</a></li>
+    <li><a href="#a-world-of-bottom-halves">A World of Bottom Halves</a>
+      <ul>
+        <li><a href="#the-original-bottom-half">The Original &ldquo;Bottom Half&rdquo;</a></li>
+        <li><a href="#task-queues">Task Queues</a></li>
+        <li><a href="#softirqs-and-tasklets">Softirqs and Tasklets</a></li>
+        <li><a href="#kernel-timers">Kernel Timers</a></li>
+      </ul>
+    </li>
+    <li><a href="#softirqs">Softirqs</a>
+      <ul>
+        <li><a href="#implementing-softirqs">Implementing Softirqs</a></li>
+        <li><a href="#executing-softirqs">Executing Softirqs</a></li>
+        <li><a href="#using-softirqs">Using Softirqs</a></li>
+      </ul>
+    </li>
+    <li><a href="#tasklets">Tasklets</a>
+      <ul>
+        <li><a href="#implementing-tasklets">Implementing Tasklets</a></li>
+        <li><a href="#ksoftirqd">ksoftirqd</a></li>
+      </ul>
+    </li>
+    <li><a href="#work-queues">Work Queues</a>
+      <ul>
+        <li><a href="#implementing-work-queues">Implementing Work Queues</a></li>
+      </ul>
+    </li>
+    <li><a href="#which-bottom-half-should-i-use">Which Bottom Half Should I Use?</a>
+      <ul>
+        <li><a href="#softirqs-least-serialization-for-highly-threaded-code">Softirqs: least serialization, for highly threaded code</a></li>
+        <li><a href="#tasklets-simple-interface-for-less-threaded-code">Tasklets: simple interface, for less threaded code</a></li>
+        <li><a href="#work-queues-process-context">Work queues: process context</a></li>
+        <li><a href="#softirqs-vs-tasklets-vs-work-queues">Softirqs vs. tasklets vs. work queues</a></li>
+      </ul>
+    </li>
+    <li><a href="#locking-between-the-bottom-halves">Locking Between the Bottom Halves</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="bottom-halves-and-deferring-work">
+  Bottom Halves and Deferring Work
+  <a class="anchor" href="#bottom-halves-and-deferring-work">#</a>
+</h1>
+<p>Interrupt handlers, can form only the first half of any interrupt processing solution, with the following limitations:</p>
+<ul>
+<li><strong>Interrupt handlers run asynchronously and interrupt other potentially important code, including other interrupt handlers.</strong> Therefore, to avoid stalling the interrupted code for too long, interrupt handlers need to run as quickly as possible.</li>
+<li>Interrupt handlers are often timing-critical because they deal with hardware.</li>
+<li><strong>Interrupt handlers do not run in process context.</strong> Therefore, they cannot block. This limits what they can do.</li>
+</ul>
+<p>Operating systems need a quick, asynchronous, and simple mechanism for immediately responding to hardware and performing any time-critical actions. Interrupt handlers serve this function well. Less critical work can and should be deferred to a later point when interrupts are enabled.</p>
+<p><strong>Consequently, managing interrupts is divided into two parts, or halves. Interrupt handlers are the top halves.</strong></p>
+<h2 id="bottom-halves">
+  Bottom Halves
+  <a class="anchor" href="#bottom-halves">#</a>
+</h2>
+<p><strong>The job of bottom halves is to perform any interrupt-related work not performed by the interrupt handler.</strong> You want the interrupt handler to perform as little work as possible and in turn be as fast as possible. By offloading as much work as possible to the bottom half, <strong>the interrupt handler can return control of the system to whatever it interrupted as quickly as possible.</strong></p>
+<p>The interrupt handler must perform some of the work. For example, the interrupt handler almost assuredly needs to acknowledge to the hardware the receipt of the interrupt.
+It may need to copy data to or from the hardware. This work is timing sensitive, so it makes sense to perform it in the interrupt handler.
+Almost anything else can be performed in the bottom half. For example, if you copy data from the hardware into memory in the top half, it makes sense to process it in the bottom half.</p>
+<p>No hard and fast rules exist about what work to perform where. The decision is left entirely up to the device-driver author.</p>
+<p>The point of a bottom half is not to do work at some specific point in the future, but simply to defer work until any point in the future when the system is less busy and interrupts are again enabled.
+<strong>Often, bottom halves run immediately after the interrupt returns.</strong> The key is that they run with all interrupts enabled.</p>
+<h2 id="a-world-of-bottom-halves">
+  A World of Bottom Halves
+  <a class="anchor" href="#a-world-of-bottom-halves">#</a>
+</h2>
+<p>While the top half is implemented entirely via the interrupt handler, multiple mechanisms are available for implementing a bottom half. These mechanisms are different interfaces and subsystems that enable you to implement bottom halves.</p>
+<h3 id="the-original-bottom-half">
+  The Original &ldquo;Bottom Half&rdquo;
+  <a class="anchor" href="#the-original-bottom-half">#</a>
+</h3>
+<p>In the beginning, Linux provided only the &ldquo;bottom half&rdquo; for implementing bottom halves. This name was logical because at the time that was the only means available for deferring work. The infrastructure was also known as BH to avoid confusion with the generic term bottom half.</p>
+<p>The BH interface was simple. It provided a statically created list of 32 bottom halves for the entire system. Each BH was globally synchronized. No two could run at the same time, even on different processors.
+<strong>This was simple and easy to use, but was also inflexible and a bottleneck.</strong></p>
+<h3 id="task-queues">
+  Task Queues
+  <a class="anchor" href="#task-queues">#</a>
+</h3>
+<p>The kernel developers later introduced <code>task queues</code> both as a method of deferring work and as a replacement for the BH mechanism.</p>
+<p>The kernel defined a family of queues.</p>
+<ul>
+<li>Each queue contained a linked list of functions to call.</li>
+<li>The queued functions were run at certain times, depending on which queue they were in.</li>
+<li>Drivers could register their bottom halves in the appropriate queue.</li>
+</ul>
+<p><strong>This worked fairly well, but it was still too inflexible to replace the BH interface entirely.</strong> It also was not lightweight enough for performance-critical subsystems, such as networking.</p>
+<h3 id="softirqs-and-tasklets">
+  Softirqs and Tasklets
+  <a class="anchor" href="#softirqs-and-tasklets">#</a>
+</h3>
+<p>The <code>softirqs</code> and <code>tasklets</code> were later introduced to completely replace the BH interface.</p>
+<ul>
+<li>Softirqs are a set of statically defined bottom halves that can run simultaneously on any processor; even two of the same type can run concurrently.</li>
+<li>Tasklets are flexible, dynamically created bottom halves built on top of softirqs.</li>
+<li>
+<ul>
+<li>Two different tasklets can run concurrently on different processors, but two of the same type of tasklet cannot run simultaneously.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Tasklets are a good trade-off between performance and ease of use. For most bottom-half processing, the tasklet is sufficient.</strong>
+<strong>Softirqs are useful when performance is critical, such as with networking.</strong> Using softirqs requires more care, however, because two of the same softirq can run at the same time. In addition, softirqs must be registered statically at compile time. Conversely, code can dynamically register tasklets.</p>
+<p>All BH users were converted to the other bottom-half interfaces. Additionally, the task queue interface was replaced by the work queue interface. Work queues are a simple yet useful method of queuing work to later be performed in process context.</p>
+<p><strong>Consequently, the 2.6 kernel has three bottom-half mechanisms in the kernel:</strong></p>
+<ul>
+<li>Softirqs</li>
+<li>Tasklets</li>
+<li>Work queues</li>
+</ul>
+<p><strong>Tasklets are built on softirqs and work queues are their own subsystem.</strong></p>
+<h3 id="kernel-timers">
+  Kernel Timers
+  <a class="anchor" href="#kernel-timers">#</a>
+</h3>
+<p>Kernel timers is another mechanism for deferring work. Unlike other mechanisms seen previously, timers defer work for a specified amount of time. That is, although the tools discussed before are useful to defer work to any time but now, you use timers to defer work until at least a specific time has elapsed.
+<strong>Therefore, timers have also other uses that Bottom Halves.</strong></p>
+<h2 id="softirqs">
+  Softirqs
+  <a class="anchor" href="#softirqs">#</a>
+</h2>
+<p><strong>Softirqs are rarely used directly; tasklets, which are built on softirqs are a much more common form of bottom half.</strong></p>
+<h3 id="implementing-softirqs">
+  Implementing Softirqs
+  <a class="anchor" href="#implementing-softirqs">#</a>
+</h3>
+<p><strong>Softirqs are statically allocated at compile time. Unlike tasklets, you cannot dynamically register and destroy softirqs.</strong>
+A 32-entry array is used to store softirqs, registered softirq consumes one entry in the array. Consequently, there are predefined number of registered softirqs that is statically determined at compile time and cannot be changed dynamically. <strong>The kernel enforces a limit of 32 registered softirqs.</strong> In the current kernel, only nine exist.</p>
+<p><strong>A softirq never preempts another softirq.</strong> The only event that can preempt a softirq is an interrupt handler. Another softirq (even the same one) can run on another processor, however.</p>
+<h3 id="executing-softirqs">
+  Executing Softirqs
+  <a class="anchor" href="#executing-softirqs">#</a>
+</h3>
+<p><strong>A registered softirq must be marked before it will execute. Usually, an interrupt handler marks its softirq for execution before returning.</strong> This is called <code>raising the softirq</code>. Then, at a suitable time, the softirq runs.</p>
+<p>Pending softirqs are checked for and executed in the following places:</p>
+<ul>
+<li>In the return from hardware interrupt code path.</li>
+<li>In the <code>ksoftirqd</code> kernel thread.</li>
+<li>In any code that explicitly checks for and executes pending softirqs, such as the networking subsystem.</li>
+</ul>
+<h3 id="using-softirqs">
+  Using Softirqs
+  <a class="anchor" href="#using-softirqs">#</a>
+</h3>
+<p><strong>Softirqs are reserved for the most timing-critical and important bottom-half processing on the system.</strong></p>
+<p>Currently, only two subsystems directly use softirqs:</p>
+<ul>
+<li>Networking devices</li>
+<li>Block devices</li>
+</ul>
+<p><strong>Additionally, kernel timers and tasklets are built on top of softirqs.</strong></p>
+<h2 id="tasklets">
+  Tasklets
+  <a class="anchor" href="#tasklets">#</a>
+</h2>
+<p><strong>Tasklets are a bottom-half mechanism built on top of softirqs.</strong> As mentioned, they have nothing to do with tasks. Tasklets are similar in nature and behavior to softirqs, but have a simpler interface and relaxed locking rules.</p>
+<h3 id="implementing-tasklets">
+  Implementing Tasklets
+  <a class="anchor" href="#implementing-tasklets">#</a>
+</h3>
+<p>Because tasklets are implemented on top of softirqs, they are softirqs. Tasklets are represented by two of the nine softirqs:</p>
+<ul>
+<li><code>HI_SOFTIRQ</code>.</li>
+<li><code>TASKLET_SOFTIRQ</code>.</li>
+</ul>
+<p><strong>Since softirqs are sorted by priority, the <code>HI_SOFTIRQ</code>-based tasklets run prior to the <code>TASKLET_SOFTIRQ</code>-based tasklets.</strong></p>
+<p>The implementation of tasklets is simple, but rather clever:</p>
+<ul>
+<li>All tasklets are multiplexed on top of two softirqs, <code>HI_SOFTIRQ</code> and <code>TASKLET_SOFTIRQ</code>.</li>
+<li>When a tasklet is scheduled, the kernel raises one of these softirqs.</li>
+<li>These softirqs, in turn, are handled by special functions that then run any scheduled tasklets.</li>
+<li>The special functions ensure that only one tasklet of a given type runs at the same time. However, other tasklets can run simultaneously.</li>
+</ul>
+<p><strong>Tasklets are dynamically created and, as with softirqs, cannot sleep.</strong> You cannot use semaphores or other blocking functions in a tasklet.
+<strong>Tasklets also run with all interrupts enabled</strong>, so you must take precautions (for example, disable interrupts and obtain a lock) if your tasklet shares data with an interrupt handler.
+<strong>Unlike softirqs, two of the same tasklets never run concurrently, though two different tasklets can run at the same time on two different processors.</strong> If a tasklet shares data with another tasklet or softirq, proper locking need to be used.</p>
+<p><strong>After a tasklet is scheduled, it runs once at some time in the near future.</strong> If the same tasklet is scheduled again, before it has had a chance to run, it still runs only once. If it is already running, for example on another processor, the tasklet is rescheduled and runs again. As an optimization, a tasklet always runs on the processor that scheduled it, making better use of the processor&rsquo;s cache.</p>
+<h3 id="ksoftirqd">
+  ksoftirqd
+  <a class="anchor" href="#ksoftirqd">#</a>
+</h3>
+<p><strong>Softirq processing is aided by a set of per-processor kernel threads.</strong> These kernel threads help in the processing of softirqs when the system is overwhelmed with softirqs. Because tasklets are implemented using softirqs, the following discussion applies equally to softirqs and tasklets.</p>
+<p>As described, the kernel processes softirqs in a number of places, most commonly on return from handling an interrupt. There are two characteristics with softirqs:</p>
+<ul>
+<li>Softirqs might be raised at high rates, such as during heavy network traffic.</li>
+<li>Softirq functions can reactivate themselves. That is, while running, a softirq can raise itself so that it runs again. For example, the networking subsystem&rsquo;s softirq raises itself.</li>
+</ul>
+<p>The issue is that in an high load environments, in which many softirqs continually reactivate themselves:</p>
+<ul>
+<li>If the Kernel keep handling softirqs, it might not accomplish much else. Resulting in user-space programs being starved of processor time.</li>
+<li>If the Kernel stops handling softirqs, it prevents starving user-space, but it does starve the softirqs and does not take good advantage of an idle system.</li>
+</ul>
+<p><strong>The solution ultimately implemented in the kernel is to not immediately process reactivated softirqs. Instead, if the number of softirqs grows excessive, the kernel wakes up a family of kernel threads to handle the load. The kernel threads run with the lowest possible priority (nice value of 19), which ensures they do not run in lieu of anything important.</strong></p>
+<p>The advantage it brings are:</p>
+<ul>
+<li>The concession prevents heavy softirq activity from completely starving user-space of processor time.</li>
+<li>It also ensures that excessive softirqs do run eventually.</li>
+<li>On an idle system the softirqs are handled rather quickly because the kernel threads will schedule immediately.</li>
+</ul>
+<p><strong>There is one thread per processor.</strong> Having a thread on each processor ensures an idle processor, if available, can always service softirqs.</p>
+<h2 id="work-queues">
+  Work Queues
+  <a class="anchor" href="#work-queues">#</a>
+</h2>
+<p>Work queues are a different form of deferring work. <strong>Work queues defer work into a kernel thread; this bottom half always runs in process context.</strong>
+Code deferred to a work queue has all the usual benefits of process context. Most importantly, work queues are schedulable and can therefore sleep.</p>
+<p>Normally, it is easy to decide between using work queues and softirqs/tasklets:</p>
+<ul>
+<li>If the deferred work needs to sleep, work queues are used.</li>
+<li>If the deferred work need not sleep, softirqs or tasklets are used.</li>
+</ul>
+<p>If you need a schedulable entity to perform your bottom-half processing, you need work queues. <strong>They are the only bottom-half mechanisms that run in process context, and thus the only ones that can sleep.</strong>
+This means they are useful for situations in which you need to allocate a lot of memory, obtain a semaphore, or perform block I/O.
+If you do not need a kernel thread to handle your deferred work, consider a tasklet instead.</p>
+<h3 id="implementing-work-queues">
+  Implementing Work Queues
+  <a class="anchor" href="#implementing-work-queues">#</a>
+</h3>
+<p>In its most basic form, the work queue subsystem is an interface for creating kernel threads to handle work queued from elsewhere. <strong>These kernel threads are called worker threads.</strong>
+Work queues enables your driver to create a special worker thread to handle deferred work. The work queue subsystem, however, implements and provides a default worker thread for handling work. <strong>Therefore, in its most common form, a work queue is a simple interface for deferring work to a generic kernel thread.</strong></p>
+<p><strong>The default worker threads are called <code>events/n</code> where <code>n</code> is the processor number; there is one per processor.</strong></p>
+<p>The default worker thread handles deferred work from multiple locations. Many drivers in the kernel defer their bottom-half work to the default thread.
+Unless a driver or subsystem has a strong requirement for creating its own thread, the default thread is preferred.</p>
+<p>Using a dedicated worker thread might be advantageous if the driver performs large amounts of processing in the worker thread. Processor-intense and performance-critical work might benefit from its own thread.
+This also lightens the load on the default threads, which prevents starving the rest of the queued work.</p>
+<p>Tasks for work threads are strung into a linked list, one for each type of queue on each processor. For example, there is one list of deferred work for the generic thread, per processor.</p>
+<ul>
+<li>When a worker thread wakes up (the thread&rsquo;s state is set to <code>TASK_RUNNING</code>), it runs any work in its list.</li>
+<li><strong>A worker thread executes the work in process context. By default, interrupts are enabled and no locks are held. If needed, it can sleep.</strong></li>
+<li>As it completes work, it removes the corresponding task entries from the linked list.</li>
+<li>When the list is empty, it goes back to sleep (the thread&rsquo;s state is set to <code>TASK_INTERRUPTIBLE</code>).</li>
+</ul>
+<p>Despite running in process context, <strong>the work handlers cannot access user-space memory because there is no associated user-space memory map for kernel threads.</strong> The kernel can access user memory only when running on behalf of a user-space process, such as when executing a system call. Only then is user memory mapped in.</p>
+<h2 id="which-bottom-half-should-i-use">
+  Which Bottom Half Should I Use?
+  <a class="anchor" href="#which-bottom-half-should-i-use">#</a>
+</h2>
+<h3 id="softirqs-least-serialization-for-highly-threaded-code">
+  Softirqs: least serialization, for highly threaded code
+  <a class="anchor" href="#softirqs-least-serialization-for-highly-threaded-code">#</a>
+</h3>
+<p>Softirqs, by design, provide the least serialization. This requires softirq handlers to go through extra steps to ensure that shared data is safe because two or more softirqs of the same type may run concurrently on different processors.
+If the code in question is already highly threaded, such as in a networking subsystem that is chest-deep in per-processor variables, softirqs make a good choice.
+<strong>They are certainly the fastest alternative for timing-critical and high-frequency uses.</strong></p>
+<h3 id="tasklets-simple-interface-for-less-threaded-code">
+  Tasklets: simple interface, for less threaded code
+  <a class="anchor" href="#tasklets-simple-interface-for-less-threaded-code">#</a>
+</h3>
+<p>Tasklets make more sense if the code is not finely threaded. They have a simpler interface and, because two tasklets of the same type might not run concurrently, they are easier to implement. <strong>Tasklets are effectively softirqs that do not run concurrently.</strong>
+A driver developer should always choose tasklets over softirqs, unless prepared to utilize per-processor variables or similar magic to ensure that the softirq can safely run concurrently on multiple processors.</p>
+<h3 id="work-queues-process-context">
+  Work queues: process context
+  <a class="anchor" href="#work-queues-process-context">#</a>
+</h3>
+<p><strong>If the deferred work needs to run in process context, the only choice of the three is work queues.</strong> If process context is not a requirements (specifically, if you have no need to sleep), softirqs or tasklets are perhaps better suited. Work queues involve the highest overhead because they involve kernel threads and, therefore, context switching. This doesn&rsquo;t mean they are inefficient, but in light of thousands of interrupts hitting per second (as the networking subsystem might experience), other methods make more sense. However, work queues are sufficient for most situations.</p>
+<h3 id="softirqs-vs-tasklets-vs-work-queues">
+  Softirqs vs. tasklets vs. work queues
+  <a class="anchor" href="#softirqs-vs-tasklets-vs-work-queues">#</a>
+</h3>
+<p>In terms of ease of use, work queues wins. Using the default events queue is easy. Next come tasklets, which also have a simple interface. Coming in last are softirqs, which need to be statically created and require careful thinking with their implementation.</p>
+<p>If the driver need a schedulable entity to perform the deferred work, and if fundamentally, it need to sleep for any reason, then work queues are your only option. Otherwise, tasklets are preferred.
+Only if scalability becomes a concern the driver could use softirqs.</p>
+<p>The following table is a comparison between the three bottom-half interfaces.</p>
+<table>
+<thead>
+<tr>
+<th>Bottom Half</th>
+<th>Context</th>
+<th>Inherent Serialization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Softirq</td>
+<td>Interrupt</td>
+<td>None</td>
+</tr>
+<tr>
+<td>Tasklets</td>
+<td>Interrupt</td>
+<td>Against the same tasklet</td>
+</tr>
+<tr>
+<td>Work Queues</td>
+<td>Process</td>
+<td>None (scheduled as process context)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="locking-between-the-bottom-halves">
+  Locking Between the Bottom Halves
+  <a class="anchor" href="#locking-between-the-bottom-halves">#</a>
+</h2>
+<p>It is crucial to protect shared data from concurrent access while using bottom halves, even on a single processor machine. <strong>A bottom half can run at virtually any moment.</strong></p>
+<p>One benefit of tasklets is that they are serialized with respect to themselves. <strong>The same tasklet will not run concurrently, even on two different processors.</strong> This means you do not have to worry about intra-tasklet concurrency issues. Inter-tasklet concurrency (when two different tasklets share the same data) requires proper locking.</p>
+<p>On the other hand, because <strong>softirqs provide no serialization, (even two instances of the same softirq might run simultaneously), all shared data needs an appropriate lock.</strong></p>
+<p>If process context code and a bottom half share data, you need to do both of the following before accessing the data:</p>
+<ul>
+<li>Disable bottom-half processing.</li>
+<li>Obtain a lock.</li>
+</ul>
+<p>If interrupt context code and a bottom half share data, you need to do both of the following before accessing the data:</p>
+<ul>
+<li>Disable interrupts.</li>
+<li>Obtain a lock.</li>
+</ul>
+<p>In both cases, this ensures local and SMP protection and prevents a deadlock.</p>
+<p>Because work queues run in process context, there are no issues with asynchronous execution, and thus, there is no need to disable them. On the other hand, protecting shared data is the same as in any process context and requires locking.
+However, because softirqs and tasklets can occur asynchronously (for example, on return from handling an interrupt), kernel code may need to disable them.</p>
+<p><strong>The locking is no different from normal kernel code because work queues run in process context.</strong></p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#bottom-halves">Bottom Halves</a></li>
+    <li><a href="#a-world-of-bottom-halves">A World of Bottom Halves</a>
+      <ul>
+        <li><a href="#the-original-bottom-half">The Original &ldquo;Bottom Half&rdquo;</a></li>
+        <li><a href="#task-queues">Task Queues</a></li>
+        <li><a href="#softirqs-and-tasklets">Softirqs and Tasklets</a></li>
+        <li><a href="#kernel-timers">Kernel Timers</a></li>
+      </ul>
+    </li>
+    <li><a href="#softirqs">Softirqs</a>
+      <ul>
+        <li><a href="#implementing-softirqs">Implementing Softirqs</a></li>
+        <li><a href="#executing-softirqs">Executing Softirqs</a></li>
+        <li><a href="#using-softirqs">Using Softirqs</a></li>
+      </ul>
+    </li>
+    <li><a href="#tasklets">Tasklets</a>
+      <ul>
+        <li><a href="#implementing-tasklets">Implementing Tasklets</a></li>
+        <li><a href="#ksoftirqd">ksoftirqd</a></li>
+      </ul>
+    </li>
+    <li><a href="#work-queues">Work Queues</a>
+      <ul>
+        <li><a href="#implementing-work-queues">Implementing Work Queues</a></li>
+      </ul>
+    </li>
+    <li><a href="#which-bottom-half-should-i-use">Which Bottom Half Should I Use?</a>
+      <ul>
+        <li><a href="#softirqs-least-serialization-for-highly-threaded-code">Softirqs: least serialization, for highly threaded code</a></li>
+        <li><a href="#tasklets-simple-interface-for-less-threaded-code">Tasklets: simple interface, for less threaded code</a></li>
+        <li><a href="#work-queues-process-context">Work queues: process context</a></li>
+        <li><a href="#softirqs-vs-tasklets-vs-work-queues">Softirqs vs. tasklets vs. work queues</a></li>
+      </ul>
+    </li>
+    <li><a href="#locking-between-the-bottom-halves">Locking Between the Bottom Halves</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

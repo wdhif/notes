@@ -1,6 +1,7 @@
 +++
 title = "8. Bottom Halves and Deferring Work"
 description = " "
+weight = 8
 +++
 
 # Bottom Halves and Deferring Work

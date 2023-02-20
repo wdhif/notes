@@ -1,6 +1,7 @@
 +++
 title = "3. Process Management"
 description = " "
+weight = 3
 +++
 
 ### The Process

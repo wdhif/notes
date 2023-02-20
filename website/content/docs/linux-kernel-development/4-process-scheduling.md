@@ -1,6 +1,7 @@
 +++
 title = "4. Process Scheduling"
 description = " "
+weight = 4
 +++
 
 ### The Scheduler

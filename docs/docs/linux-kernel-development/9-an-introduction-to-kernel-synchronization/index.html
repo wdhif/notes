@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content=" ">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="9. An Introduction to Kernel Synchronization" />
+<meta property="og:description" content=" " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wdhif.github.io/grimoire/docs/linux-kernel-development/9-an-introduction-to-kernel-synchronization/" /><meta property="article:section" content="docs" />
+
+
+
+<title>9. An Introduction to Kernel Synchronization | Grimoire</title>
+<link rel="manifest" href="/grimoire/manifest.json">
+<link rel="icon" href="/grimoire/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/grimoire/book.min.a82d7e77ceb134d151c4d7e381eeb30623fbd5a524d58c584d8716ecec0205bd.css" integrity="sha256-qC1&#43;d86xNNFRxNfjge6zBiP71aUk1YxYTYcW7OwCBb0=" crossorigin="anonymous">
+  <script defer src="/grimoire/flexsearch.min.js"></script>
+  <script defer src="/grimoire/en.search.min.4d8a43b5c03d1f1d349dbe38f7d2f0019ba3ef75e159cf08aabe2de639f030dd.js" integrity="sha256-TYpDtcA9Hx00nb4499LwAZuj73XhWc8Iqr4t5jnwMN0=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/grimoire/"><span>Grimoire</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-a636cf7ff01915518c145384840d72ee" class="toggle" checked />
+    <label for="section-a636cf7ff01915518c145384840d72ee" class="flex justify-between">
+      <a href="/grimoire/docs/linux-kernel-development/" class="">Linux Kernel Development</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/" class="">1. Introduction to the Linux Kernel</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/2-getting-started-with-the-kernel/" class="">2. Getting Started with the Kernel</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/3-process-management/" class="">3. Process Management</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/4-process-scheduling/" class="">4. Process Scheduling</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/5-system-calls/" class="">5. System Calls</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/6-kernel-data-structures/" class="">6. Kernel Data Structures</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/" class="">7. Interrupts and Interrupt Handlers</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/" class="">8. Bottom Halves and Deferring Work</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/grimoire/docs/linux-kernel-development/9-an-introduction-to-kernel-synchronization/" class="active">9. An Introduction to Kernel Synchronization</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/grimoire/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>9. An Introduction to Kernel Synchronization</strong>
+
+  <label for="toc-control">
+    
+    <img src="/grimoire/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#critical-regions-and-race-conditions">Critical Regions and Race Conditions</a>
+      <ul>
+        <li><a href="#why-do-we-need-protection">Why Do We Need Protection?</a></li>
+        <li><a href="#the-single-variable">The Single Variable</a></li>
+      </ul>
+    </li>
+    <li><a href="#locking">Locking</a>
+      <ul>
+        <li><a href="#causes-of-concurrency">Causes of Concurrency</a></li>
+      </ul>
+    </li>
+    <li><a href="#deadlocks">Deadlocks</a></li>
+    <li><a href="#contention-and-scalability">Contention and Scalability</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="an-introduction-to-kernel-synchronization">
+  An Introduction to Kernel Synchronization
+  <a class="anchor" href="#an-introduction-to-kernel-synchronization">#</a>
+</h1>
+<p>In a shared memory application, developers must ensure that shared resources are protected from concurrent access. The kernel is no exception.
+<strong>Symmetrical multiprocessing is supported in Linux. Multiprocessing support implies that kernel code can simultaneously run on two or more processors.</strong></p>
+<p>Shared resources require protection from concurrent access because if multiple threads of execution access and manipulate the data at the same time, the threads may overwrite each other&rsquo;s changes or access data while it is in an inconsistent state.
+Consequently, without protection, code in the kernel, running on two different processors, can simultaneously access shared data at exactly the same time.</p>
+<p>The term threads of execution implies any instance of executing code. For example, this includes any of the following:</p>
+<ul>
+<li>A task in the kernel</li>
+<li>An interrupt handler</li>
+<li>A bottom half</li>
+<li>A kernel thread</li>
+</ul>
+<p>Concurrent access of shared data often results in instability is hard to track down and debug.</p>
+<p>The Linux kernel is preemptive. This implies that (in the absence of protection) the scheduler can preempt kernel code at virtually any point and reschedule another task.
+A number of scenarios enable for concurrency inside the kernel, and they all require protection.</p>
+<h2 id="critical-regions-and-race-conditions">
+  Critical Regions and Race Conditions
+  <a class="anchor" href="#critical-regions-and-race-conditions">#</a>
+</h2>
+<p><strong>Code paths that access and manipulate shared data are called <code>critical regions</code> (also called <code>critical sections</code>).</strong> It is usually unsafe for multiple threads of execution to access the same resource simultaneously.
+To prevent concurrent access during critical regions, the programmer must ensure that code executes <strong>atomically</strong>, which means that operations complete without interruption as if the entire critical region were one indivisible instruction.</p>
+<p><strong>If two threads of execution simultaneously execute within the same critical region, it is called a <code>race condition</code>, so-named because the threads raced to get there first.</strong> Debugging race conditions is often difficult because they are not easily reproducible.
+<strong>Ensuring that unsafe concurrency is prevented and that race conditions do not occur is called <code>synchronization</code>.</strong></p>
+<h3 id="why-do-we-need-protection">
+  Why Do We Need Protection?
+  <a class="anchor" href="#why-do-we-need-protection">#</a>
+</h3>
+<p>To best understand the need for synchronization, look at the ubiquity of race conditions.
+The first example is a real-world case: an ATM (Automated Teller Machine, called a cash machine).</p>
+<p>The ATM works as follows:</p>
+<ul>
+<li>Check whether the deduction is possible.</li>
+<li>Compute the new total funds.</li>
+<li>Finally execute the physical deduction.</li>
+</ul>
+<p>Assuming a user, with a $100 in the bank, and user&rsquo;s spouse are initiating withdrawal of $75.</p>
+<ul>
+<li>Both the user and user&rsquo;s spouse initiate withdrawal at the same time.</li>
+<li>Both transactions verify that sufficient funds exist, in both cases, the user has $100 in the bank for the withdrawal of $75.</li>
+<li>In both transactions, the new computed total fund would be $25.</li>
+<li>In both cases, the users would be getting $75, for a total of $150, while still having in the bank $25.</li>
+<li>This means that the user funds would increase from $100 to $175.</li>
+</ul>
+<p>Clearly, financial institutions must ensure that this can never happen. They must lock the account during certain operations, making each transaction atomic with respect to any other transaction.
+Such transactions must occur in their entirety, without interruption, or not occur at all.</p>
+<h3 id="the-single-variable">
+  The Single Variable
+  <a class="anchor" href="#the-single-variable">#</a>
+</h3>
+<p>Consider a simple shared resource, a single global integer, and a simple critical region, the operation of merely incrementing it: <code>i++</code>.</p>
+<p>This might translate into machine instructions to the computer&rsquo;s processor that resemble the following:</p>
+<ul>
+<li>Get the current value of <code>i</code> and copy it into a register.</li>
+<li>Add one to the value stored in the register.</li>
+<li>Write back to memory the new value of <code>i</code>.</li>
+</ul>
+<p>Assume that there are two threads of execution, both enter this critical region, and the initial value of <code>i</code> is 7. The desired outcome is then similar to the following (with each row representing a unit of time):</p>
+<table>
+<thead>
+<tr>
+<th>Thread 1</th>
+<th>Thread 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>get <code>i</code> (7)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>increment <code>i</code> (7 -&gt; 8)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>write back <code>i</code> (8)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>—</td>
+<td>get <code>i</code> (8)</td>
+</tr>
+<tr>
+<td>—</td>
+<td>increment <code>i</code> (8 -&gt; 9)</td>
+</tr>
+<tr>
+<td>—</td>
+<td>write back <code>i</code> (9)</td>
+</tr>
+</tbody>
+</table>
+<p>As expected, 7 incremented twice is 9.</p>
+<p>However, another possible outcome is the following:</p>
+<table>
+<thead>
+<tr>
+<th>Thread 1</th>
+<th>Thread 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>get <code>i</code> (7)</td>
+<td>get <code>i</code> (7)</td>
+</tr>
+<tr>
+<td>increment <code>i</code> (7 -&gt; 8)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>—</td>
+<td>increment <code>i</code> (7 -&gt; 8)</td>
+</tr>
+<tr>
+<td>write back <code>i</code> (8)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>—</td>
+<td>write back <code>i</code> (9)</td>
+</tr>
+</tbody>
+</table>
+<p>If both threads of execution read the initial value of <code>i</code> before it is incremented, both threads increment and save the same value. As a result, the variable <code>i</code> contains the value 8 when, in fact, it should now contain 9.
+This is one of the simplest examples of a critical region. The solution is simple. We merely need a way to perform these operations in one indivisible step.
+Most processors provide an instruction to atomically read, increment, and write back a single variable.</p>
+<p>Using this atomic instruction, the only possible outcome is:</p>
+<table>
+<thead>
+<tr>
+<th>Thread 1</th>
+<th>Thread 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increment &amp; store <code>i</code> (7 -&gt; 8)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>—</td>
+<td>increment &amp; store <code>i</code> (8 -&gt; 9)</td>
+</tr>
+</tbody>
+</table>
+<p>Thread 2 could also be incrementing <code>i</code> first, but the result would be the same.</p>
+<p><strong>It would never be possible for the two atomic operations to interleave. The processor would physically ensure that it was impossible.</strong> Using such an instruction would alleviate the problem. The kernel provides a set of interfaces that implement these atomic instructions, which are discussed in the next chapter.</p>
+<h2 id="locking">
+  Locking
+  <a class="anchor" href="#locking">#</a>
+</h2>
+<p>Assuming a queue of requests that needs to be serviced and the implementation is a linked list, in which each node represents a request. Two functions manipulate the queue:</p>
+<ul>
+<li>One function adds a new request to the tail of the queue.</li>
+<li>One function removes a request from the head of the queue and service request.</li>
+</ul>
+<p>Requests are continually being added, removed, and serviced, since various parts of the kernel invoke these two functions.
+Manipulating the request queues certainly requires multiple instructions. If one thread attempts to read from the queue while another is in the middle of manipulating it, the reading thread will find the queue in an inconsistent state.
+It should be apparent the sort of damage that could occur if access to the queue could occur concurrently. <strong>Often, when the shared resource is a complex data structure, the result of a race condition is corruption of the data structure.</strong></p>
+<p>Although it is feasible for a particular architecture to implement simple instructions, such as arithmetic and comparison, atomically it is ludicrous for architectures to provide instructions to support the indefinitely sized critical regions that would exist in the example.</p>
+<p>What is needed is a way of making sure that only one thread manipulates the data structure at a time, a mechanism for preventing access to a resource while another thread of execution is in the marked region.
+<strong>A lock provides such a mechanism. Threads hold locks; locks protect data.</strong></p>
+<ul>
+<li>Whenever there was a new request to add to the queue, the thread would first obtain the lock. Then it could safely add the request to the queue and ultimately release the lock.</li>
+<li>When a thread wanted to remove a request from the queue, it would also obtain the lock. Then it could read the request and remove it from the queue. Finally, it would release the lock.</li>
+</ul>
+<p>Any other access to the queue would similarly need to obtain the lock. Because the lock can be held by only one thread at a time, only a single thread can manipulate the queue at a time.
+If a thread comes along while another thread is already updating it, the second thread has to wait for the first to release the lock before it can continue. <strong>The lock prevents concurrency and protects the queue from race conditions.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Thread 1</th>
+<th>Thread 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>try to lock the queue</td>
+<td>try to lock the queue</td>
+</tr>
+<tr>
+<td>succeeded: acquired lock</td>
+<td>failed: waiting&hellip;</td>
+</tr>
+<tr>
+<td>access queue&hellip;</td>
+<td>waiting&hellip;</td>
+</tr>
+<tr>
+<td>unlock the queue</td>
+<td>waiting&hellip;</td>
+</tr>
+<tr>
+<td>—</td>
+<td>succeeded: acquired lock</td>
+</tr>
+<tr>
+<td>—</td>
+<td>access queue&hellip;</td>
+</tr>
+<tr>
+<td>—</td>
+<td>unlock the queue</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notice that locks are advisory and voluntary.</strong> Locks are entirely a programming construct that the programmer must take advantage of.
+Nothing prevents you from writing code that manipulates the fictional queue without the appropriate lock, but such a practice would eventually result in a race condition and corruption.</p>
+<p><strong>Locks come in various shapes and sizes. Linux alone implements a handful of different locking mechanisms.</strong> The most significant difference between the various mechanisms is the behavior when the lock is unavailable because another thread already holds it:</p>
+<ul>
+<li>Some lock variants busy wait (spin in a tight loop, checking the status of the lock over and over, waiting for the lock to become available).</li>
+<li>Other locks put the current task to sleep until the lock becomes available.</li>
+</ul>
+<p><strong>The itself lock does not solve the problem; it simply shrinks the critical region down to just the lock and unlock code: probably much smaller, but still a potential race. What if a lock is aquired by two threads at the exact same time?</strong></p>
+<p><strong>Fortunately, locks are implemented using atomic operations that ensure no race exists.</strong> A single instruction can verify whether the key is taken and, if not, seize it.
+How this is done is architecture-specific, but almost all processors implement an atomic test and set instruction that tests the value of an integer and sets it to a new value only if it is zero. A value of zero means unlocked.</p>
+<h3 id="causes-of-concurrency">
+  Causes of Concurrency
+  <a class="anchor" href="#causes-of-concurrency">#</a>
+</h3>
+<p>In user-space, programs are scheduled preemptively at the will of the scheduler. Because a process can be preempted at any time and another process can be scheduled onto the processor, a process can be involuntarily preempted in the middle of accessing a critical region.
+If the newly scheduled process then enters the same critical region (for example, if the two processes manipulate the same shared memory or write to the same file descriptor), a race can occur.
+The same problem can occur with multiple single-threaded processes sharing files, or within a single program with signals, because signals can occur asynchronously.
+<strong>This type of concurrency in which two things do not actually happen at the same time but interleave with each other is called pseudo-concurrency.</strong></p>
+<p>With a symmetrical multiprocessing machine (multiple processors or cores), two processes can actually be executed in a critical region at the exact same time. <strong>That is called true concurrency</strong>. Although the causes and semantics of true versus pseudo concurrency are different, they both result in the same race conditions and require the same sort of protection.</p>
+<p>The kernel has similar causes of concurrency:</p>
+<ul>
+<li><strong>Interrupts:</strong> An interrupt can occur asynchronously at almost any time, interrupting the currently executing code.</li>
+<li><strong>Softirqs and tasklets:</strong> The kernel can raise or schedule a softirq or tasklet at almost any time, interrupting the currently executing code.</li>
+<li><strong>Kernel preemption:</strong> Because the kernel is preemptive, one task in the kernel can preempt another.</li>
+<li><strong>Sleeping and synchronization with user-space:</strong> A task in the kernel can sleep and thus invoke the scheduler, resulting in the running of a new process.</li>
+<li><strong>Symmetrical multiprocessing:</strong> Two or more processors can execute kernel code at exactly the same time.</li>
+</ul>
+<p><strong>This is the reason locking and synchronization mechanisms are needed.</strong></p>
+<h2 id="deadlocks">
+  Deadlocks
+  <a class="anchor" href="#deadlocks">#</a>
+</h2>
+<p><strong>A deadlock is a condition involving one or more threads of execution and one or more resources, such that each thread waits for one of the resources, but all the resources are already held.</strong></p>
+<p><strong>The threads all wait for each other, but they never make any progress toward releasing the resources that they already hold. Therefore, none of the threads can continue, which results in a deadlock.</strong></p>
+<p>A good analogy is a four-way traffic stop. If each car at the stop decides to wait for the other cars before going, no car will ever proceed, and we have a traffic deadlock.</p>
+<p><strong>The most common example is with two threads and two locks, which is often called the deadly embrace or the ABBA deadlock:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Thread 1</th>
+<th>Thread 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>acquire lock A</td>
+<td>acquire lock B</td>
+</tr>
+<tr>
+<td>try to acquire lock B</td>
+<td>try to acquire lock A</td>
+</tr>
+<tr>
+<td>wait for lock B</td>
+<td>wait for lock A</td>
+</tr>
+</tbody>
+</table>
+<p>Each thread is waiting for the other, and neither thread will ever release its original lock; therefore, neither lock will become available.</p>
+<p>Prevention of deadlock scenarios is important. Although it is difficult to prove that code is free of deadlocks, the following rules can help in writing a deadlock-free code:</p>
+<ul>
+<li><strong>Implement lock ordering.</strong> Nested locks must always be obtained in the same order. This prevents the deadly embrace deadlock.</li>
+<li>Prevent starvation.</li>
+<li>
+<ul>
+<li>Does this code always finish?</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>If foo does not occur, will bar wait forever?</li>
+</ul>
+</li>
+<li>Do not double acquire the same lock.</li>
+<li>Design for simplicity. Complexity locking schemes invites deadlocks.</li>
+</ul>
+<p>The first point is most important and worth stressing. <strong>If two or more locks are acquired at the same time, they must always be acquired in the same order.</strong>
+The order of unlock does not matter with respect to deadlock, although it is common practice to release the locks in an order inverse to that in which they were acquired.</p>
+<p>Preventing deadlocks is important. The Linux kernel has some basic debugging facilities for detecting deadlock scenarios in a running kernel, which are discussed in the next chapter.</p>
+<h2 id="contention-and-scalability">
+  Contention and Scalability
+  <a class="anchor" href="#contention-and-scalability">#</a>
+</h2>
+<p><strong>The term lock contention, or simply contention, describes a lock currently in use but that another thread is trying to acquire.</strong>
+A lock that is highly contended often has threads waiting to acquire it. High contention can occur because a lock is frequently obtained, held for a long time after it is obtained, or both.
+Because a lock&rsquo;s job is to serialize access to a resource, they can slow down a system&rsquo;s performance. A highly contended lock can become a bottleneck in the system, quickly limiting its performance.
+However, a solution to high contention must continue to provide the necessary concurrency protection, because locks are also required to prevent the system from tearing itself to shreds.</p>
+<p><strong>Scalability is a measurement of how well a system can be expanded.</strong> In operating systems, we talk of the scalability with a large number of processes, a large number of processors, or large amounts of memory.
+We can discuss scalability in relation to virtually any component of a computer to which we can attach a quantity. Ideally, doubling the number of processors should result in a doubling of the system&rsquo;s processor performance, which, of course, is never the case.</p>
+<p><strong>The granularity of locking is a description of the size or amount of data that a lock protects:</strong></p>
+<ul>
+<li>A very coarse lock protects a large amount of data, e.g. an entire subsystem’s set of data structures.</li>
+<li>On the other hand, a very fine-grained lock protects a small amount of data, e.g. only a single element in a larger structure.</li>
+</ul>
+<p>Scalability improvement is generally a good thing because it improves Linux&rsquo;s performance on larger and more powerful systems.
+However, rampant scalability &ldquo;improvements&rdquo; can lead to a decrease in performance on smaller SMP and UP machines, because smaller machines may not need such fine-grained locking but will nonetheless need to put up with the increased complexity and overhead.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#critical-regions-and-race-conditions">Critical Regions and Race Conditions</a>
+      <ul>
+        <li><a href="#why-do-we-need-protection">Why Do We Need Protection?</a></li>
+        <li><a href="#the-single-variable">The Single Variable</a></li>
+      </ul>
+    </li>
+    <li><a href="#locking">Locking</a>
+      <ul>
+        <li><a href="#causes-of-concurrency">Causes of Concurrency</a></li>
+      </ul>
+    </li>
+    <li><a href="#deadlocks">Deadlocks</a></li>
+    <li><a href="#contention-and-scalability">Contention and Scalability</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

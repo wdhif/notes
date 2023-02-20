@@ -2,9 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/</loc>
-  </url><url>
     <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/</loc>
+  </url><url>
+    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/</loc>
   </url><url>
     <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/2-getting-started-with-the-kernel/</loc>
   </url><url>
@@ -19,6 +19,8 @@
     <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/</loc>
   </url><url>
     <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/</loc>
+  </url><url>
+    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/9-an-introduction-to-kernel-synchronization/</loc>
   </url><url>
     <loc>https://wdhif.github.io/grimoire/categories/</loc>
   </url><url>

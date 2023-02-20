@@ -1,6 +1,7 @@
 +++
 title = "1. Introduction to the Linux Kernel"
 description = " "
+weight = 1
 +++
 
 ### Introduction to Unix

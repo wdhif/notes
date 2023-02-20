@@ -1,6 +1,7 @@
 +++
 title = "9. An Introduction to Kernel Synchronization"
 description = " "
+weight = 9
 +++
 
 # An Introduction to Kernel Synchronization

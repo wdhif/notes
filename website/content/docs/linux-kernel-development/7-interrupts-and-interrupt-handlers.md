@@ -1,6 +1,7 @@
 +++
 title = "7. Interrupts and Interrupt Handlers"
 description = " "
+weight = 7
 +++
 
 # Interrupts and Interrupt Handlers

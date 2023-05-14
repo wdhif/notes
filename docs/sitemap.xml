@@ -2,32 +2,44 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-performance-tools/1-methodologies/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/2-getting-started-with-the-kernel/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/3-process-management/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-performance-tools/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/4-process-scheduling/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/2-getting-started-with-the-kernel/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/5-system-calls/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-performance-tools/2-tools/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/6-kernel-data-structures/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/3-process-management/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/4-process-scheduling/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/5-system-calls/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/docs/linux-kernel-development/9-an-introduction-to-kernel-synchronization/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/6-kernel-data-structures/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/categories/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/docs/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/9-an-introduction-to-kernel-synchronization/</loc>
   </url><url>
-    <loc>https://wdhif.github.io/grimoire/tags/</loc>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/10-kernel-synchronization-methods/</loc>
+  </url><url>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/11-timers-and-time-management/</loc>
+  </url><url>
+    <loc>https://wdhif.github.io/notes/docs/linux-kernel-development/12-memory-management/</loc>
+  </url><url>
+    <loc>https://wdhif.github.io/notes/categories/</loc>
+  </url><url>
+    <loc>https://wdhif.github.io/notes/docs/</loc>
+  </url><url>
+    <loc>https://wdhif.github.io/notes/</loc>
+  </url><url>
+    <loc>https://wdhif.github.io/notes/tags/</loc>
   </url>
 </urlset>

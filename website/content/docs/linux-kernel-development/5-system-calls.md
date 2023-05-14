@@ -27,7 +27,7 @@ System calls provide a layer between the hardware and user-space processes, whic
 An API defines a set of programming interfaces used by applications. Those interfaces can be implemented as a system call, implemented through multiple system calls, or implemented without the use of system calls at all.
 The same API can exist on multiple systems and provide the same interface to applications while the implementation of the API itself can differ greatly from system to system.
 
-![Relationship between a POSIX API, the C library, and system calls.](https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_5.1.png)
+![Relationship between a POSIX API, the C library, and system calls.](https://raw.githubusercontent.com/wdhif/notes/master/website/static/linux-kernel-development/figure_5.1.png)
 
 The most common APIs in the Unix world is based on POSIX. Technically, POSIX is composed of a series of standards from the IEEE that aim to provide a portable operating system standard roughly based on Unix. Linux strives to be POSIX- and SUSv3-compliant where applicable.
 
@@ -75,7 +75,7 @@ Simply entering kernel-space alone is not sufficient because multiple system cal
 **Thus, the system call number must be passed into the kernel. On x86, the syscall number is fed to the kernel via the `eax` register.**
 Before causing the trap into the kernel, user-space sticks in eax the number corresponding to the desired system call. The system call handler then reads the value from eax.
 
-![Invoking the system call handler and executing a system call.](https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_5.2.png)
+![Invoking the system call handler and executing a system call.](https://raw.githubusercontent.com/wdhif/notes/master/website/static/linux-kernel-development/figure_5.2.png)
 
 #### Parameter Passing
 

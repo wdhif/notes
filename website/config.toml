@@ -1,6 +1,6 @@
-baseURL = "https://wdhif.github.io/grimoire"
+baseURL = "https://wdhif.github.io/notes"
 languageCode = "en-us"
-title = "Grimoire"
+title = "Notes"
 theme = "hugo-book"
 publishDir = "../docs"
 

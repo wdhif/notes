@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux Performance Tools on Notes</title>
+    <link>https://wdhif.github.io/notes/docs/linux-performance-tools/</link>
+    <description>Recent content in Linux Performance Tools on Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://wdhif.github.io/notes/docs/linux-performance-tools/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>1. Methodologies</title>
+      <link>https://wdhif.github.io/notes/docs/linux-performance-tools/1-methodologies/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/notes/docs/linux-performance-tools/1-methodologies/</guid>
+      <description>Methodologies # There are dozens of performance tools for Linux
+Packages: sysstat, procps, coreutils, &amp;hellip; Commercial products Methodologies can provide guidance for choosing and using tools effectively, by giving you a starting point, a process, and an ending point in your diagnotics. Problem Statement Method # What makes you think there is a performance problem? Has this system ever performed well? What has changed recently? (Software? Hardware? Load?) Can the performance degradation be expressed in terms of latency or run time?</description>
+    </item>
+    
+    <item>
+      <title>2. Tools</title>
+      <link>https://wdhif.github.io/notes/docs/linux-performance-tools/2-tools/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/notes/docs/linux-performance-tools/2-tools/</guid>
+      <description>Tools # There are dozens of performance tools for Linux
+Packages: sysstat, procps, coreutils, &amp;hellip; Commercial products Methodologies can provide guidance for choosing and using tools effectively, by giving you a starting point, a process, and an ending point in your diagnotics. Command Line Tools # Useful to study even if you never use them: GUIs and commercial products often use the same interfaces.
+Tool Types
+Type Characteristic Observability Watch activity.</description>
+    </item>
+    
+  </channel>
+</rss>

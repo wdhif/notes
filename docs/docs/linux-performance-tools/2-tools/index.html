@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content=" ">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="6. Kernel Data Structures" />
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2. Tools" />
 <meta property="og:description" content=" " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://wdhif.github.io/notes/docs/linux-kernel-development/6-kernel-data-structures/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://wdhif.github.io/notes/docs/linux-performance-tools/2-tools/" /><meta property="article:section" content="docs" />
 
 
 
-<title>6. Kernel Data Structures | Notes</title>
+<title>2. Tools | Notes</title>
 <link rel="manifest" href="/notes/manifest.json">
 <link rel="icon" href="/notes/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/notes/book.min.a82d7e77ceb134d151c4d7e381eeb30623fbd5a524d58c584d8716ecec0205bd.css" integrity="sha256-qC1&#43;d86xNNFRxNfjge6zBiP71aUk1YxYTYcW7OwCBb0=" crossorigin="anonymous">
@@ -69,7 +69,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-a636cf7ff01915518c145384840d72ee" class="toggle" checked />
+    <input type="checkbox" id="section-a636cf7ff01915518c145384840d72ee" class="toggle"  />
     <label for="section-a636cf7ff01915518c145384840d72ee" class="flex justify-between">
       <a href="/notes/docs/linux-kernel-development/" class="">Linux Kernel Development</a>
     </label>
@@ -150,7 +150,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/notes/docs/linux-kernel-development/6-kernel-data-structures/" class="active">6. Kernel Data Structures</a>
+    <a href="/notes/docs/linux-kernel-development/6-kernel-data-structures/" class="">6. Kernel Data Structures</a>
   
 
         </li>
@@ -246,7 +246,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-997bddfa338379aaf5b252b2d366285e" class="toggle"  />
+    <input type="checkbox" id="section-997bddfa338379aaf5b252b2d366285e" class="toggle" checked />
     <label for="section-997bddfa338379aaf5b252b2d366285e" class="flex justify-between">
       <a href="/notes/docs/linux-performance-tools/" class="">Linux Performance Tools</a>
     </label>
@@ -275,7 +275,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/notes/docs/linux-performance-tools/2-tools/" class="">2. Tools</a>
+    <a href="/notes/docs/linux-performance-tools/2-tools/" class="active">2. Tools</a>
   
 
         </li>
@@ -322,7 +322,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="/notes/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>6. Kernel Data Structures</strong>
+  <strong>2. Tools</strong>
 
   <label for="toc-control">
     
@@ -336,7 +336,18 @@ https://github.com/alex-shpak/hugo-book
   <aside class="hidden clearfix">
     
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#command-line-tools">Command Line Tools</a></li>
+    <li><a href="#observability-tools">Observability Tools</a>
+      <ul>
+        <li><a href="#uptime">uptime</a></li>
+        <li><a href="#top-or-htop">top (or htop)</a></li>
+        <li><a href="#ps">ps</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
 
 
@@ -347,11 +358,127 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="kernel-data-structures">
-  Kernel Data Structures
-  <a class="anchor" href="#kernel-data-structures">#</a>
+  <article class="markdown"><h1 id="tools">
+  Tools
+  <a class="anchor" href="#tools">#</a>
 </h1>
-<p>TODO</p>
+<p>There are dozens of performance tools for Linux</p>
+<ul>
+<li>Packages: sysstat, procps, coreutils, &hellip;</li>
+<li>Commercial products
+Methodologies can provide guidance for choosing and using tools effectively, by giving you a starting point, a process, and an ending point in your diagnotics.</li>
+</ul>
+<h2 id="command-line-tools">
+  Command Line Tools
+  <a class="anchor" href="#command-line-tools">#</a>
+</h2>
+<p>Useful to study even if you never use them: GUIs and commercial products often use the same interfaces.</p>
+<p><strong>Tool Types</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Characteristic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Observability</td>
+<td>Watch activity. Usually safe, depending on resource overhead.</td>
+</tr>
+<tr>
+<td>Benchmarking</td>
+<td>Load test. Caution: production tests can cause issues due to contention.</td>
+</tr>
+<tr>
+<td>Tuning</td>
+<td>Change. Danger: changes could hurt performance, now or later with load.</td>
+</tr>
+<tr>
+<td>Static</td>
+<td>Check configuration. Should be safe</td>
+</tr>
+</tbody>
+</table>
+<h2 id="observability-tools">
+  Observability Tools
+  <a class="anchor" href="#observability-tools">#</a>
+</h2>
+<p>Basic Observability Tools:</p>
+<ul>
+<li>uptime</li>
+<li>top (or htop)</li>
+<li>ps</li>
+<li>vmstat</li>
+<li>iostat</li>
+<li>mpstat</li>
+<li>free</li>
+</ul>
+<h3 id="uptime">
+  uptime
+  <a class="anchor" href="#uptime">#</a>
+</h3>
+<ul>
+<li>One way to print <em>load averages</em>:</li>
+</ul>
+<pre tabindex="0"><code>$ uptime
+07:42:06 up 8:16, 1 user, load average: 2.27, 2.84, 2.91
+</code></pre><ul>
+<li>A measure of resource demand: CPUs + disks</li>
+<li>
+<ul>
+<li>Other OSes only show CPUs: easier to interpret</li>
+</ul>
+</li>
+<li>Exponentially-damped moving averages</li>
+<li>Time constants of 1, 5, and 15 minutes</li>
+<li>
+<ul>
+<li>Allow to have an historic trend without a line graph</li>
+</ul>
+</li>
+<li>If the load is larger than the number of CPUs, it may indicate CPU saturation</li>
+<li>
+<ul>
+<li>Don’t spend more than 5 seconds studying these</li>
+</ul>
+</li>
+</ul>
+<h3 id="top-or-htop">
+  top (or htop)
+  <a class="anchor" href="#top-or-htop">#</a>
+</h3>
+<ul>
+<li>System and per-process interval summary:</li>
+</ul>
+<pre tabindex="0"><code>$ top - 18:50:26 up 7:43, 1 user, load average: 4.11, 4.91, 5.22
+Tasks: 209 total, 1 running, 206 sleeping, 0 stopped, 2 zombie
+Cpu(s): 47.1%us, 4.0%sy, 0.0%ni, 48.4%id, 0.0%wa, 0.0%hi, 0.3%si, 0.2%st
+Mem: 70197156k total, 44831072k used, 25366084k free,    36360k buffers
+Swap:       0k total,        0k used,        0k free, 11873356k cached
+ PID  USER    PR NI  VIRT  RES   SHR S %CPU %MEM   TIME+ COMMAND 
+ 5738 apiprod 20  0 62.6g  29g  352m S  417 44.2 2144:15 java
+ 1386 apiprod 20  0 17452 1388   964 R    0  0.0 0:00.02 top
+    1 root    20  0 24340 2272  1340 S    0  0.0 0:01.51 init
+    2 root    20  0     0    0     0 S    0  0.0 0:00.00 kthreadd
+[…]
+</code></pre><ul>
+<li><code>%CPU</code> is summed across all CPUs</li>
+<li>Can miss short-lived processes (<code>atop</code> won’t)</li>
+<li>Can consume noticeable CPU to read <code>/proc</code></li>
+</ul>
+<h3 id="ps">
+  ps
+  <a class="anchor" href="#ps">#</a>
+</h3>
+<ul>
+<li>
+<p>Process status listing (eg, “ASCII art forest”):</p>
+</li>
+<li>
+<p>Custom fields:</p>
+</li>
+</ul>
 </article>
  
       
@@ -391,7 +518,18 @@ https://github.com/alex-shpak/hugo-book
       <div class="book-toc-content">
         
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#command-line-tools">Command Line Tools</a></li>
+    <li><a href="#observability-tools">Observability Tools</a>
+      <ul>
+        <li><a href="#uptime">uptime</a></li>
+        <li><a href="#top-or-htop">top (or htop)</a></li>
+        <li><a href="#ps">ps</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
 
  

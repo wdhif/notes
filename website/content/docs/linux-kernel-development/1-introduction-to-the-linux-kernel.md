@@ -38,7 +38,7 @@ An OS contains:
 
 When executing kernel code, the system is in kernel-space executing in kernel mode. When running a regular process, the system is in user-space executing in user mode.
 
-Applications running on the system comminicate with the kernel using **system calls** ([Figure 1.1](https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_1.1.png))
+Applications running on the system comminicate with the kernel using **system calls** ([Figure 1.1](https://raw.githubusercontent.com/wdhif/notes/master/website/static/linux-kernel-development/figure_1.1.png))
 
 Basically, an application will use a C library to use the system call interface. The system calls will allow the Kernel to do operation on behalf of the application.
 Furthermore, the application is said to be executing a system call in **kernel-space**, and the kernel is running in **process context**.
@@ -47,7 +47,7 @@ Some function of this C library provide many feature not found in system calls, 
 
 On the other hand, the `open()` function simply use the `open()` system call. Other functions of this C library does not use system calls at all, E.G. `strcpy()`.
 
-![Relationship between applications, the kernel, and hardware.](https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_1.1.png)
+![Relationship between applications, the kernel, and hardware.](https://raw.githubusercontent.com/wdhif/notes/master/website/static/linux-kernel-development/figure_1.1.png)
 
 The Kernel also manage system's hardware. When the hardware want to communicate, it will send an **hardware interrupt** to the CPU, which will in turn interrupt the Kernel, which will in turn operate a context switch to execute the **interrupt handler**.
 

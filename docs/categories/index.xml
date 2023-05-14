@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Categories on Grimoire</title>
-    <link>https://wdhif.github.io/grimoire/categories/</link>
-    <description>Recent content in Categories on Grimoire</description>
+    <title>Categories on Notes</title>
+    <link>https://wdhif.github.io/notes/categories/</link>
+    <description>Recent content in Categories on Notes</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://wdhif.github.io/grimoire/categories/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language><atom:link href="https://wdhif.github.io/notes/categories/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

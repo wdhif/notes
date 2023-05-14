@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content=" ">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="12. Memory Management" />
+<meta property="og:description" content=" " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wdhif.github.io/notes/docs/linux-kernel-development/12-memory-management/" /><meta property="article:section" content="docs" />
+
+
+
+<title>12. Memory Management | Notes</title>
+<link rel="manifest" href="/notes/manifest.json">
+<link rel="icon" href="/notes/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/notes/book.min.a82d7e77ceb134d151c4d7e381eeb30623fbd5a524d58c584d8716ecec0205bd.css" integrity="sha256-qC1&#43;d86xNNFRxNfjge6zBiP71aUk1YxYTYcW7OwCBb0=" crossorigin="anonymous">
+  <script defer src="/notes/flexsearch.min.js"></script>
+  <script defer src="/notes/en.search.min.33adceff88e218ecada73bd0c682772d530b04d0ed8c50718fe1b1b6f87de1eb.js" integrity="sha256-M63O/4jiGOytpzvQxoJ3LVMLBNDtjFBxj&#43;Gxtvh94es=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/notes/"><span>Notes</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-a636cf7ff01915518c145384840d72ee" class="toggle" checked />
+    <label for="section-a636cf7ff01915518c145384840d72ee" class="flex justify-between">
+      <a href="/notes/docs/linux-kernel-development/" class="">Linux Kernel Development</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/" class="">1. Introduction to the Linux Kernel</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-kernel-development/2-getting-started-with-the-kernel/" class="">2. Getting Started with the Kernel</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-kernel-development/3-process-management/" class="">3. Process Management</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-kernel-development/4-process-scheduling/" class="">4. Process Scheduling</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-kernel-development/5-system-calls/" class="">5. System Calls</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-kernel-development/6-kernel-data-structures/" class="">6. Kernel Data Structures</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/" class="">7. Interrupts and Interrupt Handlers</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/" class="">8. Bottom Halves and Deferring Work</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-kernel-development/9-an-introduction-to-kernel-synchronization/" class="">9. An Introduction to Kernel Synchronization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-kernel-development/10-kernel-synchronization-methods/" class="">10. Kernel Synchronization Methods</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-kernel-development/11-timers-and-time-management/" class="">11. Timers and Time Management</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-kernel-development/12-memory-management/" class="active">12. Memory Management</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-997bddfa338379aaf5b252b2d366285e" class="toggle"  />
+    <label for="section-997bddfa338379aaf5b252b2d366285e" class="flex justify-between">
+      <a href="/notes/docs/linux-performance-tools/" class="">Linux Performance Tools</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-performance-tools/1-methodologies/" class="">1. Methodologies</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/notes/docs/linux-performance-tools/2-tools/" class="">2. Tools</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/notes/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>12. Memory Management</strong>
+
+  <label for="toc-control">
+    
+    <img src="/notes/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#pages">Pages</a></li>
+    <li><a href="#zones">Zones</a></li>
+    <li><a href="#getting-pages">Getting Pages</a>
+      <ul>
+        <li><a href="#kmalloc">kmalloc()</a></li>
+        <li><a href="#kfree">kfree()</a></li>
+        <li><a href="#vmalloc">vmalloc()</a></li>
+      </ul>
+    </li>
+    <li><a href="#slab-layer">Slab Layer</a>
+      <ul>
+        <li><a href="#design-of-the-slab-layer">Design of the Slab Layer</a></li>
+      </ul>
+    </li>
+    <li><a href="#statically-allocating-on-the-stack">Statically Allocating on the Stack</a>
+      <ul>
+        <li><a href="#playing-fair-on-the-stack">Playing Fair on the Stack</a></li>
+      </ul>
+    </li>
+    <li><a href="#high-memory-mappings">High Memory Mappings</a>
+      <ul>
+        <li><a href="#permanent-mappings">Permanent Mappings</a></li>
+        <li><a href="#temporary-mappings">Temporary Mappings</a></li>
+      </ul>
+    </li>
+    <li><a href="#per-cpu-allocations">Per-CPU Allocations</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="memory-management">
+  Memory Management
+  <a class="anchor" href="#memory-management">#</a>
+</h1>
+<p>Unlike user-space, the kernel is not always afforded the capability to easily allocate memory.
+For example, the kernel cannot easily deal with memory allocation errors, and the kernel often cannot sleep.
+Because of these limitations, and the need for a lightweight memory allocation scheme, getting hold of memory in the kernel is more complicated than in user-space.</p>
+<h2 id="pages">
+  Pages
+  <a class="anchor" href="#pages">#</a>
+</h2>
+<p><strong>The kernel treats physical pages as the basic unit of memory management.</strong>
+Although the processor’s smallest addressable unit is a byte or a word, the <strong>memory management unit (MMU, the hardware that manages memory and performs virtual to physical address translations)</strong> typically deals in pages.
+Therefore, the MMU maintains the system’s page tables with page-sized granularity (hence their name). In terms of virtual memory, pages are the smallest unit that matters.</p>
+<p>Each architecture defines its own page size. Many architectures even support multiple page sizes.</p>
+<ul>
+<li>Most 32-bit architectures have 4KB pages.</li>
+<li>Most 64-bit architectures have 8KB pages.</li>
+</ul>
+<p>The kernel represents every physical page on the system with a <code>struct page</code> structure.
+The kernel uses this structure to keep track of all the pages in the system, because the kernel needs to know whether a page is free (whether the page is not allocated).
+If a page is not free, the kernel needs to know who owns the page. Possible owners include (but not limited to):</p>
+<ul>
+<li>User-space processes.</li>
+<li>Dynamically allocated kernel data.</li>
+<li>Static kernel code.</li>
+<li>Page cache.</li>
+</ul>
+<p>The page structure is associated with physical pages, not virtual pages; what the structure describes is transient at best.
+Even if the data contained in the page continues to exist, it might not always be associated with the same page structure because of swapping and so on.
+The kernel uses this data structure to describe the associated physical page. The data structure’s goal is to describe physical memory, not the data contained therein.</p>
+<p>Since an instance of this structure is allocated for each physical page in the system, how much space is used to maintain the pages structures?
+With each <code>struct page</code> consuming 40 bytes of memory and assuming that the system has 8KB physical pages and has 4GB of physical memory. In that case, there are about 524,288 pages and page structures on the system.
+The page structures consume 20MB: perhaps a surprisingly large number in absolute terms, but only a small fraction of a percent relative to the system’s 4GB. This is not too high a cost for managing all the system’s physical pages.</p>
+<h2 id="zones">
+  Zones
+  <a class="anchor" href="#zones">#</a>
+</h2>
+<p>The kernel cannot treat all pages as identical due to hardware limitations. Some pages, because of their physical address in memory, cannot be used for certain tasks. Thus, the kernel divides pages into different zones. The kernel uses the zones to group pages of similar properties.</p>
+<p>Linux has to deal with two shortcomings of hardware with respect to memory addressing:</p>
+<ul>
+<li>Some hardware devices can perform <strong>DMA (direct memory access)</strong> to only certain memory addresses.</li>
+<li>Some architectures can physically addressing larger amounts of memory than they can virtually address. Consequently, some memory is not permanently mapped into the kernel address space.</li>
+</ul>
+<p>Due to these contraints, Linux has four primary memory zones:</p>
+<ul>
+<li><code>ZONE_DMA</code>: This zone contains pages that can undergo DMA.</li>
+<li><code>ZONE_DMA32</code>: Like <code>ZONE_DMA</code>, this zone contains pages that can undergo DMA. Unlike <code>ZONE_DMA</code>, these pages are accessible only by 32-bit devices. On some architectures, this zone is a larger subset of memory.</li>
+<li><code>ZONE_NORMAL</code>: This zone contains normal, regularly mapped, pages.</li>
+<li><code>ZONE_HIGHMEM</code>: This zone contains &ldquo;high memory&rdquo;, which are pages not permanently mapped into the kernel’s address space.</li>
+</ul>
+<p>The layout of the memory zones is architecture-dependent.</p>
+<ul>
+<li>Some architectures can perform DMA into any memory address. In those architectures, <code>ZONE_DMA</code> is empty and <code>ZONE_NORMAL</code> is used for allocations regardless of their use.</li>
+<li>On the x86 architecture, ISA devices cannot perform DMA into the full 32-bit address space because ISA devices can access only the first 16MB of physical memory. Consequently, <code>ZONE_DMA</code> on x86 consists of all memory in the range 0MB–16MB.</li>
+</ul>
+<p>ZONE_HIGHMEM works similarly.</p>
+<ul>
+<li>On 32-bit x86 systems, <code>ZONE_HIGHMEM</code> is all memory above the physical 896MB mark. On other architectures, <code>ZONE_HIGHMEM</code> is empty because all memory is directly mapped. The memory contained in <code>ZONE_HIGHMEM</code> is called high memory. The rest of the system’s memory is called low memory.</li>
+<li><code>ZONE_NORMAL</code> is the remainder after the previous two zones claim their requisite shares. On x86, <code>ZONE_NORMAL</code> is all physical memory from 16MB to 896MB. On other architectures, <code>ZONE_NORMAL</code> is all available memory.</li>
+</ul>
+<p>The following table is a listing of each zone and its consumed pages on x86-32.</p>
+<table>
+<thead>
+<tr>
+<th>Zone</th>
+<th>Description</th>
+<th>Physical Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZONE_DMA</td>
+<td>DMA-able pages</td>
+<td>&lt; 16MB</td>
+</tr>
+<tr>
+<td>ZONE_NORMAL</td>
+<td>Normally addressable pages</td>
+<td>16–896MB</td>
+</tr>
+<tr>
+<td>ZONE_HIGHMEM</td>
+<td>Dynamically mapped pages</td>
+<td>&gt; 896MB</td>
+</tr>
+</tbody>
+</table>
+<p>Linux partitions pages into zones to have a pooling in place to satisfy allocations as needed.
+For example, with a <code>ZONE_DMA</code> pool, the kernel has the capability to satisfy memory allocations needed for DMA.
+If such memory is needed, the kernel can simply pull the required number of pages from <code>ZONE_DMA</code>.
+The zones do not have any physical relevance but are simply logical groupings used by the kernel to keep track of pages.</p>
+<p>Although some allocations may require pages from a particular zone, other allocations may pull from multiple zones. For example:</p>
+<ul>
+<li>An allocation for DMA-able memory must originate from <code>ZONE_DMA</code></li>
+<li>A normal allocation can come from <code>ZONE_DMA</code> or <code>ZONE_NORMAL</code> but not both; allocations cannot cross zone boundaries. The kernel prefers to satisfy normal allocations from the normal zone to save the pages in <code>ZONE_DMA</code> for allocations that need it.</li>
+</ul>
+<p>Not all architectures define all zones. For example, a 64-bit architecture such as Intel’s x86-64 can fully map and handle 64-bits of memory.
+Thus, x86-64 has no <code>ZONE_HIGHMEM</code> and all physical memory is contained within <code>ZONE_DMA</code> and <code>ZONE_NORMAL</code>.</p>
+<p>Each zone is represented by <code>struct zone</code> structure.</p>
+<h2 id="getting-pages">
+  Getting Pages
+  <a class="anchor" href="#getting-pages">#</a>
+</h2>
+<p>The Kernel implement different interfaces to enable memory allocation and release.</p>
+<p>The kernel provides one low-level mechanism for managing memory, along with several interfaces to access it. All these interfaces manage memory with page-sized granularity.
+It is possible for the kernel to provide zeroed pages. This is useful for pages given to userspace because the random garbage in an allocated page is not so random; it might contain sensitive data.
+All data must be zeroed or otherwise cleaned before it is returned to userspace to ensure system security is not compromised.</p>
+<p>These low-level page functions are useful when page-sized chunks of physically contiguous pages are needed, especially if the need is exactly a single page or two. For more general byte-sized allocations, the kernel provides <code>kmalloc()</code>.</p>
+<h3 id="kmalloc">
+  kmalloc()
+  <a class="anchor" href="#kmalloc">#</a>
+</h3>
+<p>The <code>kmalloc()</code> function is similar to user-space’s <code>malloc()</code>, with the exception of the additional flags parameter. The <code>kmalloc()</code> function is a simple interface for obtaining kernel memory in byte-sized chunks. If whole pages are needed, the previously discussed interfaces might be a better choice. For most kernel allocations, <code>kmalloc()</code> is the preferred interface.</p>
+<p>The <code>kmalloc()</code> function returns a pointer to a region of memory that is at least size bytes in length. It may allocate more than asked, although it is not possible to know how much more.
+Because the kernel allocator is page-based, some allocations may be rounded up to fit within the available memory.
+<strong>The kernel never returns less memory than requested.</strong> If the kernel is unable to find at least the requested amount, the allocation fails and the function returns <code>NULL</code>.
+The region of memory allocated is physically contiguous. Kernel allocations always succeed, unless an insufficient amount of memory is available. Thus, a check for <code>NULL</code> after all calls to <code>kmalloc()</code> and handling the error appropriately should be done.</p>
+<p>Flags can be passed as parameters to <code>kmalloc()</code> to modify its behaviour. To specify from which zones to allocate memory for example, by default, it will allocate from either <code>ZONE_DMA</code> or <code>ZONE_NORMAL</code>, with a strong preference to satisfy the allocation from <code>ZONE_NORMAL</code>.</p>
+<p><code>kmalloc()</code> cannot allocate from <code>ZONE_HIGHMEM</code>. Only low-level interfaces can allocate high memory.</p>
+<h3 id="kfree">
+  kfree()
+  <a class="anchor" href="#kfree">#</a>
+</h3>
+<p>The counterpart to <code>kmalloc()</code> is <code>kfree()</code>. It frees a block of memory previously allocated with <code>kmalloc()</code>.</p>
+<p>Calling this function on memory not previously allocated with kmalloc(), or on memory that has already been freed is a bug, resulting in bad behavior such as freeing memory belonging to another part of the kernel.
+<strong>As in user-space, each allocations should be at some point deallocated to prevent memory leaks and other bugs.</strong></p>
+<h3 id="vmalloc">
+  vmalloc()
+  <a class="anchor" href="#vmalloc">#</a>
+</h3>
+<p>The <code>vmalloc()</code> function works in a similar fashion to <code>kmalloc()</code>, except <code>vmalloc()</code> allocates memory that is only virtually contiguous and not necessarily physically contiguous.
+This is similar to user-space <code>malloc()</code> and its usage is identical. The returned pages by which are contiguous within the virtual address space, but necessarily contiguous in physical RAM.</p>
+<p>The <code>vmalloc()</code> function ensures that the pages are physically contiguous by by allocating potentially noncontiguous chunks of physical memory and &ldquo;fixing up&rdquo; the page tables to map the memory into a contiguous chunk of the logical address space.</p>
+<ul>
+<li>Usually, only hardware devices require physically contiguous memory allocations, because they live on the other side of the memory management unit and do not understand virtual addresses.</li>
+<li>Blocks of memory used only by software (e.g.process-related buffers) are fine using memory that is only virtually contiguous. All memory appears to the kernel as logically contiguous.</li>
+</ul>
+<p>Though physically contiguous memory is required in only certain cases, most kernel code uses <code>kmalloc()</code> and not <code>vmalloc()</code> to obtain memory primarily for performance.</p>
+<p>The <code>vmalloc()</code> function, to make nonphysically contiguous pages contiguous in the virtual address space, must specifically set up the page table entries.
+Worse, pages obtained via <code>vmalloc()</code> must be mapped by their individual pages (because they are not physically contiguous), which results in much greater <a href="https://en.wikipedia.org/wiki/Thrashing_%28computer_science%29#TLB_thrashing">TLB thrashing</a> compared to using directly mapped memory.
+Because of these concerns, <code>vmalloc()</code> is used only when absolutely necessary (typically, to obtain large regions of memory). For example, when modules are dynamically inserted into the kernel, they are loaded into memory created via <code>vmalloc()</code>.</p>
+<p><code>vfree()</code> is used to free an allocation obtained via <code>vmalloc()</code>.</p>
+<h2 id="slab-layer">
+  Slab Layer
+  <a class="anchor" href="#slab-layer">#</a>
+</h2>
+<p>Allocating and freeing data structures is one of the most common operations inside any kernel.
+To facilitate frequent allocations and deallocations of data, programmers often introduce free lists. <strong>A free list contains a block of available, already allocated, data structures.</strong></p>
+<ul>
+<li>When code requires a new instance of a data structure, it can grab one of the structures off the free list rather than allocate the sufficient amount of memory and set it up for the data structure.</li>
+<li>When the data structure is no longer needed, it is returned to the free list instead of deallocated. In this sense, the free list acts as an object cache, caching a frequently used type of object.</li>
+</ul>
+<p>One of the main problems with free lists in the kernel is that there exists no global control.
+When available memory is low, there is no way for the kernel to communicate to every free list that it should shrink the sizes of its cache to free up memory.
+The kernel has no understanding of the random free lists at all. To remedy this, and to consolidate code, the Linux kernel provides the <strong>slab layer (also called the slab allocator)</strong>.
+<strong>The slab layer acts as a generic data structure-caching layer.</strong></p>
+<p>The concept of slab layer comes from Sun Microsystem&rsquo;s SunOS, Linux data structure caching layer shares the same name and basic design.</p>
+<p>The slab layer attempts to leverage several basic tenets:</p>
+<ul>
+<li>Frequently used data structures tend to be allocated and freed often, so cache them.</li>
+<li>Frequent allocation and deallocation can result in memory fragmentation (the inability to find large contiguous chunks of available memory). To prevent this, the cached free lists are arranged contiguously.
+Because freed data structures return to the free list, there is no resulting fragmentation.</li>
+<li>The free list provides improved performance during frequent allocation and deallocation because a freed object can be immediately returned to the next allocation.</li>
+<li>If the allocator is aware of concepts such as object size, page size, and total cache size, it can make more intelligent decisions.</li>
+<li>If part of the cache is made per-processor (separate and unique to each processor on the system), allocations and frees can be performed without an SMP lock.</li>
+<li>If the allocator is <a href="https://en.wikipedia.org/wiki/Non_uniform_memory_access">NUMA</a>-aware, it can fulfill allocations from the same memory node as the requestor.</li>
+<li>Stored objects can be colored to prevent multiple objects from mapping to the same cache lines.</li>
+</ul>
+<p>The slab layer in Linux was designed and implemented with these premises in mind.</p>
+<h3 id="design-of-the-slab-layer">
+  Design of the Slab Layer
+  <a class="anchor" href="#design-of-the-slab-layer">#</a>
+</h3>
+<p>The slab layer divides different objects into groups called caches, each of which stores a different type of object. There is one cache per object type.
+For example, one cache is for process descriptors (a free list of <code>task_struct</code> structures), whereas another cache is for inode objects (<code>struct inode</code>).
+Interestingly, the <code>kmalloc()</code> interface is built on top of the slab layer, using a family of general purpose caches.</p>
+<p>The caches are then divided into slabs (hence the name of this subsystem). The slabs are composed of one or more physically contiguous pages.
+Typically, slabs are composed of only a single page. Each cache may consist of multiple slabs. Each slab contains some number of objects, which are the data structures being cached.</p>
+<p>Each slab is in one of three states:</p>
+<ul>
+<li>A full slab has no free objects. (All objects in the slab are allocated.)</li>
+<li>A partial slab has some allocated objects and some free objects.</li>
+<li>An empty slab has no allocated objects. (All objects in the slab are free.)</li>
+</ul>
+<p>When some part of the kernel requests a new object, the request is satisfied from a partial slab, if one exists. Otherwise, the request is satisfied from an empty slab.
+If there exists no empty slab, one is created. Obviously, a full slab can never satisfy a request because it does not have any free objects. This strategy reduces fragmentation.</p>
+<p><img src="https://raw.githubusercontent.com/wdhif/notes/master/website/static/linux-kernel-development/figure_12.1.png" alt="The relationship between caches, slabs, and objects." /></p>
+<h2 id="statically-allocating-on-the-stack">
+  Statically Allocating on the Stack
+  <a class="anchor" href="#statically-allocating-on-the-stack">#</a>
+</h2>
+<p><strong>User-space can afforded large, dynamically growing stack, whereas the the kernel’s stack is small and fixed.</strong></p>
+<p>The size of the per-process kernel stacks depends on both the architecture and a compile-time option. Historically, the kernel stack has been two pages per process by default. It is now only one page per process.</p>
+<p>This is usually:</p>
+<ul>
+<li>4KB for 32-bit architectures (with one 4KB page).</li>
+<li>8KB for 64-bit architectures (wtih one 8KB page).</li>
+</ul>
+<p>The move to single-page kernel stacks was done for two reasons:</p>
+<ul>
+<li>It results in a page with less memory consumption per process.</li>
+<li>As uptime increases, it becomes increasingly hard to find two physically contiguous unallocated pages. Physical memory becomes fragmented, and the resulting VM pressure from allocating a single new process is expensive.</li>
+</ul>
+<p>There is one more complication. Each process’s entire call chain has to fit in its kernel stack. Historically, however, interrupt handlers also used the kernel stack of the process they interrupted, thus they too had to fit.
+This was efficient and simple, but it placed even tighter constraints on the already meager kernel stack. When the stack moved to only a single page, interrupt handlers no longer fit.</p>
+<p><strong>To rectify this problem, the kernel developers implemented a new feature: interrupt stacks.</strong> Interrupt stacks provide a single per-processor stack used for interrupt handlers.
+With this option, interrupt handlers no longer share the kernel stack of the interrupted process. Instead, they use their own stacks. This consumes only a single page per processor.</p>
+<p>To summarize, <strong>kernel stacks are either one or two pages</strong>, depending on compile-time configuration options. The stack can therefore range from 4KB to 16KB. Historically, interrupt handlers shared the stack of the interrupted process. <strong>When single page stacks are enabled, interrupt handlers are given their own stacks.</strong></p>
+<h3 id="playing-fair-on-the-stack">
+  Playing Fair on the Stack
+  <a class="anchor" href="#playing-fair-on-the-stack">#</a>
+</h3>
+<p>In any given function, stack usage should be kept to a minimum. The sum of all local (automatic) variables in a function should be kept to a maximum of a couple hundred bytes. Performing a large static allocation on the stack (e.g. a large array or structure) is dangerous.
+<strong>Otherwise, stack allocations are performed in the kernel just as in user-space.</strong></p>
+<p><strong>Stack overflows occur silently and will undoubtedly result in problems.</strong> Because the kernel does not make any effort to manage the stack, <strong>when the stack overflows, the excess data simply spills into whatever exists at the tail end of the stack</strong>, the first thing of which is the <code>thread_info</code> structure, which is allocated at the end of each process’s kernel stack.</p>
+<p>Beyond the stack, any kernel data might lurk. At best, the machine will crash when the stack overflows. At worst, the overflow will silently corrupt data. Therefore, it is wise to use a dynamic allocation scheme for any large memory allocations.</p>
+<h2 id="high-memory-mappings">
+  High Memory Mappings
+  <a class="anchor" href="#high-memory-mappings">#</a>
+</h2>
+<p>By definition, pages in high memory might not be permanently mapped into the kernel’s (virtual) address space. Thus, pages obtained via <code>alloc_pages()</code> with the <code>__GFP_HIGHMEM</code> flag might not have a logical address.</p>
+<p>On the x86 architecture, all physical memory beyond the 896MB mark is high memory and is not permanently or automatically mapped into the kernel’s address space, despite x86 processors being capable of physically addressing up to 4GB (64GB with <a href="https://en.wikipedia.org/wiki/Physical_Address_Extension">PAE</a>) of physical RAM.</p>
+<p><strong>After they are allocated, these pages must be mapped into the kernel’s logical address space. On x86, pages in high memory are mapped somewhere between the 3GB and 4GB mark.</strong></p>
+<h3 id="permanent-mappings">
+  Permanent Mappings
+  <a class="anchor" href="#permanent-mappings">#</a>
+</h3>
+<p>To map and unmap a given page structure into the kernel’s address space, the <code>kmap()</code> and <code>kunmap()</code> functions can be used.</p>
+<p>These functions works on either high or low memory and they can sleep.</p>
+<p>When mapping:</p>
+<ul>
+<li>If the page structure belongs to a page in low memory, the page’s virtual address is simply returned.</li>
+<li>If the page resides in high memory, a permanent mapping is created and the address is returned.</li>
+</ul>
+<p>Because the number of permanent mappings are limited, high memory should be unmapped when no longer needed.</p>
+<h3 id="temporary-mappings">
+  Temporary Mappings
+  <a class="anchor" href="#temporary-mappings">#</a>
+</h3>
+<p>When a mapping must be created but the current context cannot sleep, the kernel provides temporary mappings (also called atomic mappings).
+The kernel can atomically map a high memory page into one of the reserved mappings (which can hold temporary mappings).
+Consequently, a temporary mapping can be used in places that cannot sleep, such as interrupt handlers, because obtaining the mapping never blocks.</p>
+<p>Setting up and tearing down a temporary mapping is done via <code>kmap_atomic()</code> and <code>kunmap_atomic()</code>.</p>
+<p>This function does not block and thus can be used in interrupt context and other places that cannot reschedule.
+It also disables kernel preemption, which is needed because the mappings are unique to each processor and a reschedule might change which task is running on which processor.</p>
+<p>In many architectures, unmapping does not do anything at all except enable kernel preemption, because a temporary mapping is valid only until the next temporary mapping.
+Thus, the kernel can just &ldquo;forget about&rdquo; the temporary mapping. The next atomic mapping then simply overwrites the previous one.</p>
+<h2 id="per-cpu-allocations">
+  Per-CPU Allocations
+  <a class="anchor" href="#per-cpu-allocations">#</a>
+</h2>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#pages">Pages</a></li>
+    <li><a href="#zones">Zones</a></li>
+    <li><a href="#getting-pages">Getting Pages</a>
+      <ul>
+        <li><a href="#kmalloc">kmalloc()</a></li>
+        <li><a href="#kfree">kfree()</a></li>
+        <li><a href="#vmalloc">vmalloc()</a></li>
+      </ul>
+    </li>
+    <li><a href="#slab-layer">Slab Layer</a>
+      <ul>
+        <li><a href="#design-of-the-slab-layer">Design of the Slab Layer</a></li>
+      </ul>
+    </li>
+    <li><a href="#statically-allocating-on-the-stack">Statically Allocating on the Stack</a>
+      <ul>
+        <li><a href="#playing-fair-on-the-stack">Playing Fair on the Stack</a></li>
+      </ul>
+    </li>
+    <li><a href="#high-memory-mappings">High Memory Mappings</a>
+      <ul>
+        <li><a href="#permanent-mappings">Permanent Mappings</a></li>
+        <li><a href="#temporary-mappings">Temporary Mappings</a></li>
+      </ul>
+    </li>
+    <li><a href="#per-cpu-allocations">Per-CPU Allocations</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

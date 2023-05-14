@@ -1,37 +1,59 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Grimoire</title>
-    <link>https://wdhif.github.io/grimoire/</link>
-    <description>Recent content on Grimoire</description>
+    <title>Notes</title>
+    <link>https://wdhif.github.io/notes/</link>
+    <description>Recent content on Notes</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://wdhif.github.io/grimoire/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language><atom:link href="https://wdhif.github.io/notes/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>1. Introduction to the Linux Kernel</title>
-      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/</link>
+      <link>https://wdhif.github.io/notes/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/</guid>
+      <guid>https://wdhif.github.io/notes/docs/linux-kernel-development/1-introduction-to-the-linux-kernel/</guid>
       <description>Introduction to Unix # Unix is a family of operating systems featuring a similar API and design, including Unix, BSD, Solaris and Linux.
 Some Unix characteristics that are at the core of its strength:
 Unix is simple: only hundreds of system calls and have a straightforward, even basic, design. In Unix, everything is a file: simplifies the manipulation of data and devices into a set of core system calls: open(),read(), write(), lseek(), and close().</description>
     </item>
     
     <item>
-      <title>2. Getting Started with the Kernel</title>
-      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/2-getting-started-with-the-kernel/</link>
+      <title>1. Methodologies</title>
+      <link>https://wdhif.github.io/notes/docs/linux-performance-tools/1-methodologies/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/2-getting-started-with-the-kernel/</guid>
+      <guid>https://wdhif.github.io/notes/docs/linux-performance-tools/1-methodologies/</guid>
+      <description>Methodologies # There are dozens of performance tools for Linux
+Packages: sysstat, procps, coreutils, &amp;hellip; Commercial products Methodologies can provide guidance for choosing and using tools effectively, by giving you a starting point, a process, and an ending point in your diagnotics. Problem Statement Method # What makes you think there is a performance problem? Has this system ever performed well? What has changed recently? (Software? Hardware? Load?) Can the performance degradation be expressed in terms of latency or run time?</description>
+    </item>
+    
+    <item>
+      <title>2. Getting Started with the Kernel</title>
+      <link>https://wdhif.github.io/notes/docs/linux-kernel-development/2-getting-started-with-the-kernel/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/notes/docs/linux-kernel-development/2-getting-started-with-the-kernel/</guid>
       <description> TODO # </description>
     </item>
     
     <item>
-      <title>3. Process Management</title>
-      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/3-process-management/</link>
+      <title>2. Tools</title>
+      <link>https://wdhif.github.io/notes/docs/linux-performance-tools/2-tools/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/3-process-management/</guid>
+      <guid>https://wdhif.github.io/notes/docs/linux-performance-tools/2-tools/</guid>
+      <description>Tools # There are dozens of performance tools for Linux
+Packages: sysstat, procps, coreutils, &amp;hellip; Commercial products Methodologies can provide guidance for choosing and using tools effectively, by giving you a starting point, a process, and an ending point in your diagnotics. Command Line Tools # Useful to study even if you never use them: GUIs and commercial products often use the same interfaces.
+Tool Types
+Type Characteristic Observability Watch activity.</description>
+    </item>
+    
+    <item>
+      <title>3. Process Management</title>
+      <link>https://wdhif.github.io/notes/docs/linux-kernel-development/3-process-management/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/notes/docs/linux-kernel-development/3-process-management/</guid>
       <description>The Process # A process, or task in the Kernel, is a program (object code) that is currently running, but a program is not a process, two or more processes can actually run the same program at the same time.
 They are more than juste code (text section), they also include a set of resources such as:
 Open files. Pending signals. Internal Kernel data. Processor state. A memory address space with one or more mappings.</description>
@@ -39,60 +61,89 @@ Open files. Pending signals. Internal Kernel data. Processor state. A memory add
     
     <item>
       <title>4. Process Scheduling</title>
-      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/4-process-scheduling/</link>
+      <link>https://wdhif.github.io/notes/docs/linux-kernel-development/4-process-scheduling/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/4-process-scheduling/</guid>
+      <guid>https://wdhif.github.io/notes/docs/linux-kernel-development/4-process-scheduling/</guid>
       <description>The Scheduler # The process scheduler decides which process runs, when, and for how long.
 The process scheduler (or simply the scheduler, to which it is often shortened) divides the finite resource of processor time between the runnable processes on a system. By deciding which process runs next, the scheduler is responsible for best utilizing the system and giving users the impression that multiple processes are executing simultaneously, AKA Multitasking.</description>
     </item>
     
     <item>
       <title>5. System Calls</title>
-      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/5-system-calls/</link>
+      <link>https://wdhif.github.io/notes/docs/linux-kernel-development/5-system-calls/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/5-system-calls/</guid>
+      <guid>https://wdhif.github.io/notes/docs/linux-kernel-development/5-system-calls/</guid>
       <description>System Calls # In any modern operating system, the kernel provides a set of interfaces by which processes running in user-space can interact with the system. These interfaces give applications controlled access to hardware, a mechanism with which to create new processes and communicate with existing ones, and the capability to request other operating system resources. The existence of these interfaces, and the fact that applications are not free to directly do whatever they want, is key to providing a stable system.</description>
     </item>
     
     <item>
       <title>6. Kernel Data Structures</title>
-      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/6-kernel-data-structures/</link>
+      <link>https://wdhif.github.io/notes/docs/linux-kernel-development/6-kernel-data-structures/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/6-kernel-data-structures/</guid>
+      <guid>https://wdhif.github.io/notes/docs/linux-kernel-development/6-kernel-data-structures/</guid>
       <description>Kernel Data Structures # TODO</description>
     </item>
     
     <item>
       <title>7. Interrupts and Interrupt Handlers</title>
-      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/</link>
+      <link>https://wdhif.github.io/notes/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/</guid>
+      <guid>https://wdhif.github.io/notes/docs/linux-kernel-development/7-interrupts-and-interrupt-handlers/</guid>
       <description>Interrupts and Interrupt Handlers # A core responsibility of any operating system kernel is managing the hardware connected to the machine, hard drives and Blu-ray discs, keyboards and mice, 3D processors and wireless radios. To meet this responsibility, the kernel needs to communicate with the machine’s individual devices.
 Processors can be orders of magnitudes faster than the hardware they talk to; it is not ideal for the kernel to issue a request and wait for a response from slower hardware.</description>
     </item>
     
     <item>
       <title>8. Bottom Halves and Deferring Work</title>
-      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/</link>
+      <link>https://wdhif.github.io/notes/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/</guid>
+      <guid>https://wdhif.github.io/notes/docs/linux-kernel-development/8-bottom-halves-and-deferring-work/</guid>
       <description>Bottom Halves and Deferring Work # Interrupt handlers, can form only the first half of any interrupt processing solution, with the following limitations:
 Interrupt handlers run asynchronously and interrupt other potentially important code, including other interrupt handlers. Therefore, to avoid stalling the interrupted code for too long, interrupt handlers need to run as quickly as possible. Interrupt handlers are often timing-critical because they deal with hardware. Interrupt handlers do not run in process context.</description>
     </item>
     
     <item>
       <title>9. An Introduction to Kernel Synchronization</title>
-      <link>https://wdhif.github.io/grimoire/docs/linux-kernel-development/9-an-introduction-to-kernel-synchronization/</link>
+      <link>https://wdhif.github.io/notes/docs/linux-kernel-development/9-an-introduction-to-kernel-synchronization/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://wdhif.github.io/grimoire/docs/linux-kernel-development/9-an-introduction-to-kernel-synchronization/</guid>
+      <guid>https://wdhif.github.io/notes/docs/linux-kernel-development/9-an-introduction-to-kernel-synchronization/</guid>
       <description>An Introduction to Kernel Synchronization # In a shared memory application, developers must ensure that shared resources are protected from concurrent access. The kernel is no exception. Symmetrical multiprocessing is supported in Linux. Multiprocessing support implies that kernel code can simultaneously run on two or more processors.
 Shared resources require protection from concurrent access because if multiple threads of execution access and manipulate the data at the same time, the threads may overwrite each other&amp;rsquo;s changes or access data while it is in an inconsistent state.</description>
+    </item>
+    
+    <item>
+      <title>10. Kernel Synchronization Methods</title>
+      <link>https://wdhif.github.io/notes/docs/linux-kernel-development/10-kernel-synchronization-methods/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/notes/docs/linux-kernel-development/10-kernel-synchronization-methods/</guid>
+      <description>Kernel Synchronization Methods # The previous chapter discussed the sources of and solutions to race conditions. The Linux kernel provides a family of synchronization methods, which enable developers to write efficient and race-free code. This chapter discusses these methods and their interfaces, behavior, and use.
+Atomic Operations # As the foundation on which other synchronization methods are built, atomic operations provide instructions that execute atomically, without interruption. Atomic operators are indivisible instructions.</description>
+    </item>
+    
+    <item>
+      <title>11. Timers and Time Management</title>
+      <link>https://wdhif.github.io/notes/docs/linux-kernel-development/11-timers-and-time-management/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/notes/docs/linux-kernel-development/11-timers-and-time-management/</guid>
+      <description> Timers and Time Management # </description>
+    </item>
+    
+    <item>
+      <title>12. Memory Management</title>
+      <link>https://wdhif.github.io/notes/docs/linux-kernel-development/12-memory-management/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wdhif.github.io/notes/docs/linux-kernel-development/12-memory-management/</guid>
+      <description>Memory Management # Unlike user-space, the kernel is not always afforded the capability to easily allocate memory. For example, the kernel cannot easily deal with memory allocation errors, and the kernel often cannot sleep. Because of these limitations, and the need for a lightweight memory allocation scheme, getting hold of memory in the kernel is more complicated than in user-space.
+Pages # The kernel treats physical pages as the basic unit of memory management.</description>
     </item>
     
   </channel>

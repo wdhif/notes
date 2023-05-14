@@ -63,7 +63,7 @@ The **state** field of the **process descriptor** describes the current conditio
 
 Take note that a process in the **TASK_UNINTERRUPTIBLE** state will not even respond to **SIGKILL**. This state is represented by the famous **D** state in the **ps** command.
 
-![Flow chart of process states.](https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_3.3.png)
+![Flow chart of process states.](https://raw.githubusercontent.com/wdhif/notes/master/website/static/linux-kernel-development/figure_3.3.png)
 
 ### Process Context
 

@@ -105,7 +105,7 @@ The Kernel can only be in two different context:
 
 **The implementation of the interrupt handling system in Linux is architecture-dependent.** The implementation depends on the processor, the type of interrupt controller used, and the design of the architecture and machine.
 
-![The path that an interrupt takes from hardware and on through the kernel.](https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_7.1.png)
+![The path that an interrupt takes from hardware and on through the kernel.](https://raw.githubusercontent.com/wdhif/notes/master/website/static/linux-kernel-development/figure_7.1.png)
 
 
 ### Interrupt path

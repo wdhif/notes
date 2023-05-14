@@ -1,6 +1,6 @@
 {
-  "name": "Grimoire",
-  "short_name": "Grimoire",
+  "name": "Notes",
+  "short_name": "Notes",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

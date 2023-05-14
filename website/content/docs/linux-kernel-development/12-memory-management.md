@@ -171,7 +171,7 @@ Each slab is in one of three states:
 When some part of the kernel requests a new object, the request is satisfied from a partial slab, if one exists. Otherwise, the request is satisfied from an empty slab.
 If there exists no empty slab, one is created. Obviously, a full slab can never satisfy a request because it does not have any free objects. This strategy reduces fragmentation.
 
-![The relationship between caches, slabs, and objects.](https://raw.githubusercontent.com/wdhif/grimoire/master/website/static/linux-kernel-development/figure_12.1.png)
+![The relationship between caches, slabs, and objects.](https://raw.githubusercontent.com/wdhif/notes/master/website/static/linux-kernel-development/figure_12.1.png)
 
 ## Statically Allocating on the Stack
 
